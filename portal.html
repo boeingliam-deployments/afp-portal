@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFP Investigator Portal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #001f5e;
+    --navy-dark: #001040;
+    --navy-light: #002d8a;
+    --gold: #c8a84b;
+    --gold-light: #e2c472;
+    --white: #f4f6fa;
+    --muted: #8a96b0;
+    --border: rgba(255,255,255,0.08);
+    --gold-border: rgba(200,168,75,0.3);
+    --bg: #060d1e;
+    --surface: #0a1628;
+    --surface2: #0f1f3a;
+    --surface3: #162440;
+    --red: #d94040;
+    --green: #2db87a;
+    --amber: #e09a30;
+  }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 14px;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 16px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .afp-crest {
+    width: 34px; height: 34px;
+    background: var(--navy);
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .afp-crest span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; font-weight: 500;
+    color: var(--gold); letter-spacing: 0.5px;
+  }
+
+  .sidebar-title { font-size: 12px; font-weight: 600; color: var(--white); line-height: 1.2; }
+  .sidebar-title small { display: block; font-size: 10px; color: var(--muted); font-weight: 400; font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
+
+  .nav-section {
+    padding: 14px 14px 4px;
+    font-size: 9px;
+    color: rgba(138,150,176,0.5);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--muted);
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+  .nav-item.active { color: var(--gold); background: rgba(200,168,75,0.07); border-left-color: var(--gold); }
+
+  .nav-icon { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.8; }
+  .nav-item.active .nav-icon { opacity: 1; }
+
+  .role-badge {
+    margin: 12px 14px;
+    padding: 6px 10px;
+    background: rgba(200,168,75,0.08);
+    border: 1px solid rgba(200,168,75,0.2);
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+
+  .role-badge strong { display: block; font-size: 11px; margin-bottom: 1px; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .logout-btn {
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 5px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: color 0.15s;
+  }
+
+  .logout-btn:hover { color: var(--red); }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 11px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .topbar-left h2 { font-size: 14px; font-weight: 600; color: var(--white); }
+  .topbar-left p { font-size: 11px; color: var(--muted); margin-top: 1px; font-family: 'IBM Plex Mono', monospace; }
+
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+
+  .btn-gold {
+    background: var(--navy);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-gold:hover { background: var(--navy-light); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 7px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--white); }
+
+  .content { flex: 1; overflow-y: auto; padding: 20px; }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── HOME / SEARCH ── */
+  .home-hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-hero::after {
+    content: 'AFP';
+    position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 100px; font-weight: 600;
+    color: rgba(200,168,75,0.04);
+    pointer-events: none;
+  }
+
+  .home-hero h2 { font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+  .home-hero p { font-size: 12px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+
+  .search-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .search-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px;
+  }
+
+  .search-panel h3 {
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 7px;
+  }
+
+  .search-row {
+    display: flex; gap: 8px;
+  }
+
+  .search-row input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: var(--white);
+    font-family: 'IBM Plex Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-row input:focus { border-color: var(--gold); }
+  .search-row input::placeholder { color: rgba(138,150,176,0.5); }
+
+  .search-results { margin-top: 12px; min-height: 40px; }
+
+  /* ── RESULT CARDS ── */
+  .result-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .result-card:hover { border-color: var(--gold-border); background: var(--surface3); }
+
+  .result-card-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .result-card-title { font-size: 13px; font-weight: 600; color: var(--white); }
+  .result-card-sub { font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .pill-open { background: rgba(0,45,138,0.4); color: #7aa3e8; border: 1px solid rgba(122,163,232,0.3); }
+  .pill-closed { background: rgba(45,184,122,0.15); color: #2db87a; border: 1px solid rgba(45,184,122,0.3); }
+  .pill-urgent { background: rgba(217,64,64,0.15); color: #f08080; border: 1px solid rgba(217,64,64,0.3); }
+  .pill-pending { background: rgba(224,154,48,0.15); color: var(--amber); border: 1px solid rgba(224,154,48,0.3); }
+  .pill-flagged { background: rgba(217,64,64,0.15); color: #f08080; border: 1px solid rgba(217,64,64,0.3); }
+  .pill-cleared { background: rgba(45,184,122,0.15); color: #2db87a; border: 1px solid rgba(45,184,122,0.3); }
+  .pill-monitored { background: rgba(224,154,48,0.15); color: var(--amber); border: 1px solid rgba(224,154,48,0.3); }
+  .pill-banned { background: rgba(217,64,64,0.25); color: #f08080; border: 1px solid rgba(217,64,64,0.5); }
+
+  /* ── DETAIL PANEL ── */
+  .detail-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(6,13,30,0.7);
+    z-index: 100;
+    align-items: center; justify-content: center;
+  }
+
+  .detail-overlay.open { display: flex; }
+
+  .detail-panel {
+    background: var(--surface);
+    border: 1px solid var(--gold-border);
+    border-radius: 4px;
+    width: 680px;
+    max-width: 96vw;
+    max-height: 88vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .detail-header {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between;
+    position: sticky; top: 0;
+    background: var(--surface);
+    z-index: 1;
+  }
+
+  .detail-header h3 { font-size: 15px; font-weight: 600; color: var(--white); }
+  .detail-header p { font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-top: 3px; }
+
+  .close-btn {
+    background: none; border: none;
+    color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1;
+    padding: 0; transition: color 0.15s;
+  }
+
+  .close-btn:hover { color: var(--white); }
+
+  .detail-body { padding: 20px; }
+
+  .detail-tabs {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+
+  .tab-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+  .tab-btn:hover { color: var(--white); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-group.full { grid-column: 1 / -1; }
+
+  .field-label {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .field-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: var(--white);
+    font-family: 'IBM Plex Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .field-input:focus { border-color: var(--gold); }
+  .field-input[readonly] { opacity: 0.6; cursor: default; }
+
+  textarea.field-input { resize: vertical; min-height: 80px; font-family: 'IBM Plex Sans', sans-serif; line-height: 1.5; }
+  select.field-input option { background: var(--surface2); }
+
+  /* notes list */
+  .notes-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+
+  .note-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 3px;
+    padding: 12px 14px;
+  }
+
+  .note-meta {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    margin-bottom: 5px;
+    display: flex; justify-content: space-between;
+  }
+
+  .note-body { font-size: 13px; color: var(--white); line-height: 1.5; }
+
+  .note-del {
+    background: none; border: none;
+    color: rgba(217,64,64,0.5); cursor: pointer; font-size: 13px;
+    transition: color 0.15s; padding: 0;
+  }
+
+  .note-del:hover { color: var(--red); }
+
+  /* action row */
+  .action-row {
+    display: flex; gap: 8px; margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-danger {
+    background: rgba(217,64,64,0.1);
+    border: 1px solid rgba(217,64,64,0.3);
+    color: #f08080;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 7px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-danger:hover { background: rgba(217,64,64,0.2); }
+
+  /* ── TABLE ── */
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th {
+    padding: 9px 14px;
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    color: var(--muted);
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+  }
+
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--white); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  tr { cursor: pointer; }
+
+  .mono { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); }
+
+  /* ── RIGHT PANEL (notepad + QRF) ── */
+  .right-panel {
+    width: 260px;
+    min-width: 260px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .rp-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .rp-tab {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+  .rp-tab:hover { color: var(--white); }
+  .rp-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .rp-body { flex: 1; overflow-y: auto; padding: 14px; }
+
+  .notepad-area {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 10px;
+    font-size: 12px;
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    resize: none;
+    outline: none;
+    line-height: 1.7;
+    transition: border-color 0.15s;
+  }
+
+  .notepad-area:focus { border-color: var(--gold); }
+
+  .notepad-hint {
+    font-size: 10px;
+    color: rgba(138,150,176,0.4);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .qrf-section { margin-bottom: 16px; }
+  .qrf-section-title {
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: rgba(138,150,176,0.5);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .qrf-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .qrf-link:hover { border-color: var(--gold-border); background: var(--surface3); }
+
+  .qrf-link-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+  .qrf-link-text { flex: 1; }
+  .qrf-link-name { font-size: 12px; color: var(--white); font-weight: 500; line-height: 1.3; }
+  .qrf-link-desc { font-size: 10px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px;
+  }
+
+  .stat-label { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 6px; }
+  .stat-value { font-size: 24px; font-weight: 600; color: var(--white); line-height: 1; }
+  .stat-sub { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: var(--muted); margin-top: 4px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    background: var(--surface);
+    border: 1px solid var(--gold-border);
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--gold);
+    z-index: 999;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .toast.show { opacity: 1; }
+
+  /* ── MODAL for adding new ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(6,13,30,0.75);
+    z-index: 200;
+    align-items: center; justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--gold-border);
+    border-radius: 4px;
+    width: 520px; max-width: 96vw;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .modal-header h3 { font-size: 14px; font-weight: 600; color: var(--white); }
+  .modal-body { padding: 20px; }
+
+  /* search placeholder */
+  .empty-state {
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .empty-state .big { font-size: 28px; margin-bottom: 8px; opacity: 0.4; }
+  .section-heading { font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+
+  /* activity log */
+  .log-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+
+  .log-item:last-child { border-bottom: none; }
+  .log-time { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); min-width: 50px; margin-top: 2px; }
+  .log-text { color: var(--white); line-height: 1.4; }
+  .log-text span { color: var(--gold); }
+
+  /* supervisor-only indicator */
+  .sup-only {
+    display: inline-block;
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 1px 5px;
+    border-radius: 2px;
+    background: rgba(200,168,75,0.1);
+    color: var(--gold);
+    border: 1px solid rgba(200,168,75,0.2);
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  input[type=text], input[type=password], textarea, select {
+    -webkit-appearance: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── AUTH CHECK ── -->
+<script>
+  const authRaw = sessionStorage.getItem('afp_auth');
+  if (!authRaw) { window.location.href = 'login.html'; }
+  const auth = JSON.parse(authRaw || '{}');
+  const isSupervisor = auth.role === 'supervisor';
+</script>
+
+<!-- ── SIDEBAR ── -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="afp-crest"><span>AFP</span></div>
+    <div class="sidebar-title">AFP Portal<small>Investigator System</small></div>
+  </div>
+
+  <div class="role-badge" id="role-badge">
+    <strong id="rb-name">Loading...</strong>
+    <span id="rb-role">—</span>
+  </div>
+
+  <div class="nav-section">Investigation</div>
+  <div class="nav-item active" onclick="showView('home')">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="4"/><path d="M10 10l3 3"/></svg>
+    Search
+  </div>
+  <div class="nav-item" onclick="showView('cases')">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M5 3V2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/></svg>
+    Cases
+  </div>
+  <div class="nav-item" onclick="showView('users')">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5.5" r="2.5"/><path d="M3 13c0-2.76 2.24-5 5-5s5 2.24 5 5"/></svg>
+    Roblox Profiles
+  </div>
+
+  <div class="nav-section">Reports</div>
+  <div class="nav-item" onclick="showView('log')">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
+    Activity Log
+  </div>
+  <div class="nav-item" id="nav-admin" style="display:none" onclick="showView('admin')">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l1.5 3L13 5.5l-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5 6.5 5z"/></svg>
+    Admin <span class="sup-only">SUP</span>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="logout-btn" onclick="logout()">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M11 11l3-3-3-3M14 8H6"/></svg>
+      Sign out
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 id="view-title">Search</h2>
+      <p id="view-sub">Search Roblox profiles and case records</p>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-ghost" onclick="openAddModal()">+ New record</button>
+      <button class="btn-gold" onclick="openAddCaseModal()">+ New case</button>
+    </div>
+  </div>
+
+  <div class="content" id="main-content">
+
+    <!-- HOME VIEW -->
+    <div class="view active" id="view-home">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Cases</div><div class="stat-value" id="stat-cases">0</div><div class="stat-sub">all records</div></div>
+        <div class="stat-card"><div class="stat-label">Open Cases</div><div class="stat-value" id="stat-open">0</div><div class="stat-sub">active</div></div>
+        <div class="stat-card"><div class="stat-label">Roblox Profiles</div><div class="stat-value" id="stat-users">0</div><div class="stat-sub">tracked</div></div>
+        <div class="stat-card"><div class="stat-label">Flagged</div><div class="stat-value" id="stat-flagged">0</div><div class="stat-sub">needs review</div></div>
+      </div>
+
+      <div class="search-grid">
+        <!-- Roblox search -->
+        <div class="search-panel">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5.5" r="2.5"/><path d="M3 13c0-2.76 2.24-5 5-5s5 2.24 5 5"/></svg>
+            Roblox Profile Search
+          </h3>
+          <div class="search-row">
+            <input type="text" id="roblox-search-input" placeholder="Username or User ID..." oninput="searchRoblox(this.value)" />
+          </div>
+          <div class="search-results" id="roblox-results">
+            <div class="empty-state"><div class="big">👤</div>Enter a username or UID to search</div>
+          </div>
+        </div>
+
+        <!-- Case search -->
+        <div class="search-panel">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M5 3V2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/></svg>
+            Case Search
+          </h3>
+          <div class="search-row">
+            <input type="text" id="case-search-input" placeholder="Case ID, title, suspect..." oninput="searchCases(this.value)" />
+          </div>
+          <div class="search-results" id="case-results">
+            <div class="empty-state"><div class="big">📁</div>Enter keywords to search cases</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CASES VIEW -->
+    <div class="view" id="view-cases">
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <input type="text" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:9px 12px;font-size:13px;color:var(--white);font-family:'IBM Plex Sans',sans-serif;outline:none;" placeholder="Search cases..." oninput="renderCasesTable(this.value)" />
+        <select id="case-status-filter" onchange="renderCasesTable()" style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:9px 12px;font-size:12px;color:var(--white);font-family:'IBM Plex Mono',sans-serif;outline:none;cursor:pointer">
+          <option value="">All Status</option>
+          <option>Open</option><option>Pending</option><option>Urgent</option><option>Closed</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Case ID</th><th>Title</th><th>Suspect (Roblox)</th><th>UID</th><th>Priority</th><th>Assigned</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="cases-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- USERS VIEW -->
+    <div class="view" id="view-users">
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <input type="text" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:9px 12px;font-size:13px;color:var(--white);font-family:'IBM Plex Sans',sans-serif;outline:none;" placeholder="Search username or UID..." oninput="renderUsersTable(this.value)" />
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Username</th><th>Roblox UID</th><th>Status</th><th>Linked Case</th><th>Added By</th><th>Date</th></tr></thead>
+          <tbody id="users-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LOG VIEW -->
+    <div class="view" id="view-log">
+      <div class="table-card" style="padding:16px">
+        <div id="log-list"></div>
+      </div>
+    </div>
+
+    <!-- ADMIN VIEW -->
+    <div class="view" id="view-admin">
+      <div class="search-panel" style="margin-bottom:16px">
+        <h3>⚖️ Supervisor Controls</h3>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Manage officer credentials and permissions. Changes take effect immediately.</p>
+        <div class="field-grid">
+          <div class="field-group"><label class="field-label">New Officer ID</label><input type="text" class="field-input" id="admin-newid" placeholder="DET-XXXX"/></div>
+          <div class="field-group"><label class="field-label">Passphrase</label><input type="text" class="field-input" id="admin-newpass" placeholder="passphrase"/></div>
+        </div>
+        <div class="field-grid">
+          <div class="field-group"><label class="field-label">Role</label>
+            <select class="field-input" id="admin-newrole"><option value="investigator">Investigator</option><option value="supervisor">Supervisor</option></select>
+          </div>
+        </div>
+        <button class="btn-gold" onclick="adminAddUser()">Add Officer</button>
+        <p style="font-size:11px;color:rgba(138,150,176,0.5);font-family:'IBM Plex Mono',monospace;margin-top:10px">Note: Credentials are stored in sessionStorage for this demo. Integrate a backend for production use.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── RIGHT PANEL ── -->
+<div class="right-panel">
+  <div class="rp-tabs">
+    <div class="rp-tab active" onclick="switchRpTab('notepad')">NOTEPAD</div>
+    <div class="rp-tab" onclick="switchRpTab('qrf')">QRF</div>
+  </div>
+  <div class="rp-body">
+    <div id="rp-notepad">
+      <textarea class="notepad-area" id="notepad-text" placeholder="Quick notes...&#10;&#10;Not saved to cases — use this&#10;for working memory during&#10;an active investigation." oninput="saveNotepad()"></textarea>
+      <div class="notepad-hint">Auto-saved locally. Private to this session.</div>
+    </div>
+    <div id="rp-qrf" style="display:none">
+      <div class="qrf-section">
+        <div class="qrf-section-title">Legislation</div>
+        <a class="qrf-link" href="https://www.legislation.gov.au/Series/C1914A00012" target="_blank">
+          <span class="qrf-link-icon">⚖️</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">Crimes Act 1914</div>
+            <div class="qrf-link-desc">C1914A00012 — Federal offences</div>
+          </div>
+        </a>
+        <a class="qrf-link" href="https://www.legislation.gov.au/Series/C2004A00593" target="_blank">
+          <span class="qrf-link-icon">⚖️</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">Criminal Code Act 1995</div>
+            <div class="qrf-link-desc">Schedule 1 — Criminal Code</div>
+          </div>
+        </a>
+        <a class="qrf-link" href="https://www.legislation.gov.au/Series/C2004A04145" target="_blank">
+          <span class="qrf-link-icon">⚖️</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">Australian Federal Police Act 1979</div>
+            <div class="qrf-link-desc">Powers and structure of AFP</div>
+          </div>
+        </a>
+        <a class="qrf-link" href="https://www.legislation.gov.au/Series/C2004A03031" target="_blank">
+          <span class="qrf-link-icon">⚖️</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">Proceeds of Crime Act 2002</div>
+            <div class="qrf-link-desc">Asset forfeiture & confiscation</div>
+          </div>
+        </a>
+        <a class="qrf-link" href="https://www.legislation.gov.au/Series/C2004A01234" target="_blank">
+          <span class="qrf-link-icon">⚖️</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">Telecommunications (Interception) Act 1979</div>
+            <div class="qrf-link-desc">Lawful intercept framework</div>
+          </div>
+        </a>
+      </div>
+      <div class="qrf-section">
+        <div class="qrf-section-title">Cyber / Online</div>
+        <a class="qrf-link" href="https://www.cyber.gov.au" target="_blank">
+          <span class="qrf-link-icon">🛡️</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">Australian Cyber Security Centre</div>
+            <div class="qrf-link-desc">cyber.gov.au — Threat intel</div>
+          </div>
+        </a>
+        <a class="qrf-link" href="https://www.afp.gov.au/what-we-do/crime-types/cybercrime" target="_blank">
+          <span class="qrf-link-icon">🔍</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">AFP Cybercrime</div>
+            <div class="qrf-link-desc">afp.gov.au — Cybercrime unit</div>
+          </div>
+        </a>
+        <a class="qrf-link" href="https://www.esafety.gov.au" target="_blank">
+          <span class="qrf-link-icon">🔒</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">eSafety Commissioner</div>
+            <div class="qrf-link-desc">Online harm reports & guidance</div>
+          </div>
+        </a>
+        <a class="qrf-link" href="https://www.austrac.gov.au" target="_blank">
+          <span class="qrf-link-icon">💰</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">AUSTRAC</div>
+            <div class="qrf-link-desc">Financial intelligence unit</div>
+          </div>
+        </a>
+      </div>
+      <div class="qrf-section">
+        <div class="qrf-section-title">Reference</div>
+        <a class="qrf-link" href="https://www.roblox.com/users/search?keyword=" target="_blank">
+          <span class="qrf-link-icon">🎮</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">Roblox User Search</div>
+            <div class="qrf-link-desc">roblox.com — Profile lookup</div>
+          </div>
+        </a>
+        <a class="qrf-link" href="https://www.abf.gov.au" target="_blank">
+          <span class="qrf-link-icon">📋</span>
+          <div class="qrf-link-text">
+            <div class="qrf-link-name">Australian Border Force</div>
+            <div class="qrf-link-desc">abf.gov.au</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DETAIL OVERLAY ── -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail(event)">
+  <div class="detail-panel" id="detail-panel">
+    <div class="detail-header">
+      <div>
+        <h3 id="dp-title">—</h3>
+        <p id="dp-sub">—</p>
+      </div>
+      <button class="close-btn" onclick="closeDetailPanel()">×</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-tabs">
+        <div class="tab-btn active" onclick="switchTab('overview')">Overview</div>
+        <div class="tab-btn" onclick="switchTab('notes')">Notes</div>
+        <div class="tab-btn" onclick="switchTab('edit')">Edit</div>
+        <div class="tab-btn" id="tab-sup" style="display:none" onclick="switchTab('admin')">Admin</div>
+      </div>
+
+      <!-- Overview tab -->
+      <div class="tab-content active" id="tab-overview">
+        <div id="overview-content"></div>
+      </div>
+
+      <!-- Notes tab -->
+      <div class="tab-content" id="tab-notes">
+        <div class="notes-list" id="notes-list"></div>
+        <div class="field-group">
+          <label class="field-label">Add note</label>
+          <textarea class="field-input" id="new-note-text" rows="3" placeholder="Enter investigative note..."></textarea>
+        </div>
+        <div class="action-row">
+          <button class="btn-gold" onclick="addNote()">Save note</button>
+        </div>
+      </div>
+
+      <!-- Edit tab -->
+      <div class="tab-content" id="tab-edit">
+        <div id="edit-content"></div>
+        <div class="action-row">
+          <button class="btn-gold" onclick="saveEdit()">Save changes</button>
+          <button class="btn-ghost" onclick="closeDetailPanel()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Admin tab (supervisor only) -->
+      <div class="tab-content" id="tab-admin">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Supervisor actions for this record.</p>
+        <div class="action-row" style="border-top:none;padding-top:0">
+          <button class="btn-danger" onclick="deleteRecord()">Delete record</button>
+          <button class="btn-ghost" onclick="archiveRecord()">Archive</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD USER MODAL ── -->
+<div class="modal-overlay" id="add-user-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Roblox Profile</h3>
+      <button class="close-btn" onclick="closeModal('add-user-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-grid">
+        <div class="field-group"><label class="field-label">Username</label><input class="field-input" type="text" id="au-name" placeholder="Roblox username"/></div>
+        <div class="field-group"><label class="field-label">Roblox UID</label><input class="field-input" type="text" id="au-uid" placeholder="Numeric ID"/></div>
+      </div>
+      <div class="field-grid">
+        <div class="field-group"><label class="field-label">Status</label>
+          <select class="field-input" id="au-status"><option>Monitored</option><option>Flagged</option><option>Cleared</option><option>Banned</option></select>
+        </div>
+        <div class="field-group"><label class="field-label">Linked Case</label><input class="field-input" type="text" id="au-case" placeholder="AFP-2025-XXX (optional)"/></div>
+      </div>
+      <div class="field-group" style="margin-bottom:14px"><label class="field-label">Notes</label><textarea class="field-input" id="au-notes" rows="3" placeholder="Initial profile notes..."></textarea></div>
+      <div class="action-row" style="border-top:none;padding-top:0">
+        <button class="btn-gold" onclick="submitAddUser()">Add profile</button>
+        <button class="btn-ghost" onclick="closeModal('add-user-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD CASE MODAL ── -->
+<div class="modal-overlay" id="add-case-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Create New Case</h3>
+      <button class="close-btn" onclick="closeModal('add-case-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-grid">
+        <div class="field-group"><label class="field-label">Case ID</label><input class="field-input" type="text" id="ac-id" placeholder="AFP-2025-XXX"/></div>
+        <div class="field-group"><label class="field-label">Title</label><input class="field-input" type="text" id="ac-title" placeholder="Brief case title"/></div>
+      </div>
+      <div class="field-grid">
+        <div class="field-group"><label class="field-label">Suspect Username</label><input class="field-input" type="text" id="ac-user" placeholder="Roblox username"/></div>
+        <div class="field-group"><label class="field-label">Suspect UID</label><input class="field-input" type="text" id="ac-uid" placeholder="Roblox UID"/></div>
+      </div>
+      <div class="field-grid">
+        <div class="field-group"><label class="field-label">Priority</label>
+          <select class="field-input" id="ac-priority"><option>Normal</option><option>High</option><option>Urgent</option></select>
+        </div>
+        <div class="field-group"><label class="field-label">Assigned To</label><input class="field-input" type="text" id="ac-assigned" placeholder="Det. Name"/></div>
+      </div>
+      <div class="field-group" style="margin-bottom:14px"><label class="field-label">Initial Notes</label><textarea class="field-input" id="ac-notes" rows="3" placeholder="Initial case details..."></textarea></div>
+      <div class="action-row" style="border-top:none;padding-top:0">
+        <button class="btn-gold" onclick="submitAddCase()">Create case</button>
+        <button class="btn-ghost" onclick="closeModal('add-case-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+const WEBHOOK = "https://discord.com/api/webhooks/1498937748042813451/X3A0Nd55Jp0I_AUHFtq-ier1QrRz5kqiLZGEiD11Sz9_mj06Bv8vaB1HCHLW9e2ahz7H";
+
+/* ── DATA ── */
+let cases = JSON.parse(localStorage.getItem('afp_cases') || 'null') || [
+  {id:"AFP-2025-001",title:"Suspicious trading activity",user:"xXDarkHunter99",uid:"4812039471",priority:"Urgent",assigned:"Det. Morris",status:"Urgent",date:"2025-04-12",notes:[{by:"Det. Morris",time:"2025-04-12 09:14",text:"Multiple reports of scam trades in Adopt Me game. Victim list growing."}]},
+  {id:"AFP-2025-002",title:"Account impersonation",user:"rblx_official_2",uid:"9023847561",priority:"High",assigned:"Det. Donovan",status:"Open",date:"2025-04-18",notes:[{by:"Det. Donovan",time:"2025-04-18 14:22",text:"Account posing as Roblox admin. Stealing items via false trust."}]},
+  {id:"AFP-2025-003",title:"Exploiting / speed hack",user:"SpeedHack_king",uid:"3301928475",priority:"Normal",assigned:"Det. Walsh",status:"Pending",date:"2025-04-20",notes:[]},
+  {id:"AFP-2025-004",title:"Harassment campaign",user:"NightStalker_X",uid:"7761023894",priority:"High",assigned:"Det. Morris",status:"Open",date:"2025-04-22",notes:[{by:"Det. Morris",time:"2025-04-22 10:05",text:"Coordinated harassment targeting minors across multiple games."}]},
+  {id:"AFP-2025-005",title:"Doxxing attempt",user:"DataLeak101",uid:"2209847362",priority:"Urgent",assigned:"Det. Donovan",status:"Closed",date:"2025-04-10",notes:[{by:"Det. Donovan",time:"2025-04-10 16:30",text:"Resolved. User permanently banned. Victim support provided."}]},
+];
+
+let profiles = JSON.parse(localStorage.getItem('afp_profiles') || 'null') || [
+  {name:"xXDarkHunter99",uid:"4812039471",status:"Flagged",linked:"AFP-2025-001",added:"Det. Morris",date:"2025-04-12",notes:[{by:"Det. Morris",time:"2025-04-12 09:14",text:"Known scammer, active since Jan 2025"}]},
+  {name:"rblx_official_2",uid:"9023847561",status:"Flagged",linked:"AFP-2025-002",added:"Det. Donovan",date:"2025-04-18",notes:[]},
+  {name:"CleanUser_01",uid:"1122334455",status:"Cleared",linked:"—",added:"Det. Walsh",date:"2025-04-19",notes:[{by:"Det. Walsh",time:"2025-04-19 11:00",text:"Witness, fully cleared of involvement"}]},
+  {name:"NightStalker_X",uid:"7761023894",status:"Flagged",linked:"AFP-2025-004",added:"Det. Morris",date:"2025-04-22",notes:[]},
+];
+
+let activityLog = JSON.parse(localStorage.getItem('afp_log') || '[]');
+let currentDetailType = null;
+let currentDetailId = null;
+
+function save() {
+  localStorage.setItem('afp_cases', JSON.stringify(cases));
+  localStorage.setItem('afp_profiles', JSON.stringify(profiles));
+  localStorage.setItem('afp_log', JSON.stringify(activityLog.slice(0,100)));
+}
+
+/* ── AUTH ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const a = JSON.parse(sessionStorage.getItem('afp_auth') || '{}');
+  document.getElementById('rb-name').textContent = a.id || '—';
+  document.getElementById('rb-role').textContent = (a.role || '').toUpperCase();
+  if (isSupervisor) {
+    document.getElementById('nav-admin').style.display = 'flex';
+    document.getElementById('tab-sup').style.display = 'block';
+  }
+  loadNotepad();
+  updateStats();
+  renderCasesTable();
+  renderUsersTable();
+  renderLog();
+});
+
+function logout() {
+  sessionStorage.removeItem('afp_auth');
+  window.location.href = 'login.html';
+}
+
+/* ── VIEWS ── */
+const viewMeta = {
+  home: ['Search', 'Search Roblox profiles and case records'],
+  cases: ['Case Management', 'All active and historical cases'],
+  users: ['Roblox Profiles', 'Tracked profiles and suspects'],
+  log: ['Activity Log', 'All officer actions in this session'],
+  admin: ['Admin Panel', 'Supervisor-only controls'],
+};
+
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const meta = viewMeta[v] || ['', ''];
+  document.getElementById('view-title').textContent = meta[0];
+  document.getElementById('view-sub').textContent = meta[1];
+  if (v === 'log') renderLog();
+}
+
+/* ── STATS ── */
+function updateStats() {
+  document.getElementById('stat-cases').textContent = cases.length;
+  document.getElementById('stat-open').textContent = cases.filter(c => c.status === 'Open' || c.status === 'Urgent').length;
+  document.getElementById('stat-users').textContent = profiles.length;
+  document.getElementById('stat-flagged').textContent = profiles.filter(p => p.status === 'Flagged' || p.status === 'Banned').length;
+}
+
+/* ── SEARCH ── */
+function searchRoblox(q) {
+  const el = document.getElementById('roblox-results');
+  if (!q.trim()) { el.innerHTML = '<div class="empty-state"><div class="big">👤</div>Enter a username or UID to search</div>'; return; }
+  const r = profiles.filter(p => p.name.toLowerCase().includes(q.toLowerCase()) || p.uid.includes(q));
+  if (!r.length) { el.innerHTML = '<div class="empty-state"><div class="big">❌</div>No profiles found — <a href="#" onclick="openAddModal()" style="color:var(--gold)">add one?</a></div>'; return; }
+  el.innerHTML = r.map(p => `<div class="result-card" onclick="openDetail('profile','${p.uid}')">
+    <div class="result-card-header">
+      <div><div class="result-card-title">${p.name}</div><div class="result-card-sub">${p.uid}</div></div>
+      <span class="pill pill-${p.status.toLowerCase()}">${p.status}</span>
+    </div>
+    ${p.linked !== '—' ? `<div style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace">Linked: ${p.linked}</div>` : ''}
+  </div>`).join('');
+}
+
+function searchCases(q) {
+  const el = document.getElementById('case-results');
+  if (!q.trim()) { el.innerHTML = '<div class="empty-state"><div class="big">📁</div>Enter keywords to search cases</div>'; return; }
+  const r = cases.filter(c =>
+    c.id.toLowerCase().includes(q.toLowerCase()) ||
+    c.title.toLowerCase().includes(q.toLowerCase()) ||
+    c.user.toLowerCase().includes(q.toLowerCase()) ||
+    c.uid.includes(q)
+  );
+  if (!r.length) { el.innerHTML = '<div class="empty-state"><div class="big">❌</div>No cases found — <a href="#" onclick="openAddCaseModal()" style="color:var(--gold)">create one?</a></div>'; return; }
+  el.innerHTML = r.map(c => `<div class="result-card" onclick="openDetail('case','${c.id}')">
+    <div class="result-card-header">
+      <div><div class="result-card-title">${c.title}</div><div class="result-card-sub">${c.id} · ${c.user || '—'}</div></div>
+      <span class="pill pill-${c.status.toLowerCase()}">${c.status}</span>
+    </div>
+    <div style="font-size:11px;color:var(--muted)">Assigned: ${c.assigned} · ${c.date}</div>
+  </div>`).join('');
+}
+
+/* ── TABLES ── */
+function pillFor(val, type) {
+  if (type === 'status') {
+    const m = {open:'pill-open',closed:'pill-closed',urgent:'pill-urgent',pending:'pill-pending'};
+    return `<span class="pill ${m[(val||'').toLowerCase()]||'pill-open'}">${val}</span>`;
+  }
+  if (type === 'ustat') {
+    const m = {flagged:'pill-flagged',cleared:'pill-cleared',monitored:'pill-monitored',banned:'pill-banned'};
+    return `<span class="pill ${m[(val||'').toLowerCase()]||'pill-monitored'}">${val}</span>`;
+  }
+  if (type === 'priority') {
+    const m = {urgent:'pill-urgent',high:'pill-pending',normal:'pill-open'};
+    return `<span class="pill ${m[(val||'').toLowerCase()]||'pill-open'}">${val}</span>`;
+  }
+}
+
+function renderCasesTable(q) {
+  if (q === undefined) q = '';
+  const sf = document.getElementById('case-status-filter')?.value || '';
+  const tbody = document.getElementById('cases-tbody');
+  const filtered = cases.filter(c =>
+    (!q || c.id.toLowerCase().includes(q.toLowerCase()) || c.title.toLowerCase().includes(q.toLowerCase()) || (c.user||'').toLowerCase().includes(q.toLowerCase()) || (c.uid||'').includes(q)) &&
+    (!sf || c.status === sf)
+  );
+  tbody.innerHTML = filtered.map(c => `<tr onclick="openDetail('case','${c.id}')">
+    <td class="mono">${c.id}</td>
+    <td>${c.title}</td>
+    <td>${c.user||'—'}</td>
+    <td class="mono">${c.uid||'—'}</td>
+    <td>${pillFor(c.priority,'priority')}</td>
+    <td style="font-size:11px;color:var(--muted)">${c.assigned}</td>
+    <td>${pillFor(c.status,'status')}</td>
+    <td class="mono">${c.date}</td>
+  </tr>`).join('');
+}
+
+function renderUsersTable(q) {
+  if (q === undefined) q = '';
+  const tbody = document.getElementById('users-tbody');
+  const filtered = profiles.filter(p => !q || p.name.toLowerCase().includes(q.toLowerCase()) || p.uid.includes(q));
+  tbody.innerHTML = filtered.map(p => `<tr onclick="openDetail('profile','${p.uid}')">
+    <td style="font-weight:500">${p.name}</td>
+    <td class="mono">${p.uid}</td>
+    <td>${pillFor(p.status,'ustat')}</td>
+    <td class="mono">${p.linked||'—'}</td>
+    <td style="font-size:11px;color:var(--muted)">${p.added}</td>
+    <td class="mono">${p.date}</td>
+  </tr>`).join('');
+}
+
+/* ── DETAIL PANEL ── */
+function openDetail(type, id) {
+  currentDetailType = type;
+  currentDetailId = id;
+  const overlay = document.getElementById('detail-overlay');
+  overlay.classList.add('open');
+
+  let rec;
+  if (type === 'case') rec = cases.find(c => c.id === id);
+  else rec = profiles.find(p => p.uid === id);
+  if (!rec) return;
+
+  document.getElementById('dp-title').textContent = type === 'case' ? rec.title : rec.name;
+  document.getElementById('dp-sub').textContent = type === 'case' ? rec.id : 'UID: ' + rec.uid;
+
+  // Overview
+  if (type === 'case') {
+    document.getElementById('overview-content').innerHTML = `
+      <div class="field-grid">
+        <div><div class="field-label">Case ID</div><div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--white);margin-top:4px">${rec.id}</div></div>
+        <div><div class="field-label">Status</div><div style="margin-top:4px">${pillFor(rec.status,'status')}</div></div>
+        <div><div class="field-label">Priority</div><div style="margin-top:4px">${pillFor(rec.priority,'priority')}</div></div>
+        <div><div class="field-label">Assigned To</div><div style="font-size:13px;color:var(--white);margin-top:4px">${rec.assigned}</div></div>
+        <div><div class="field-label">Roblox Username</div><div style="font-size:13px;color:var(--white);margin-top:4px">${rec.user||'—'}</div></div>
+        <div><div class="field-label">Roblox UID</div><div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);margin-top:4px">${rec.uid||'—'}</div></div>
+        <div><div class="field-label">Date Created</div><div style="font-size:13px;color:var(--muted);margin-top:4px">${rec.date}</div></div>
+        <div><div class="field-label">Notes Count</div><div style="font-size:13px;color:var(--white);margin-top:4px">${(rec.notes||[]).length} note(s)</div></div>
+      </div>`;
+  } else {
+    document.getElementById('overview-content').innerHTML = `
+      <div class="field-grid">
+        <div><div class="field-label">Username</div><div style="font-size:13px;font-weight:600;color:var(--white);margin-top:4px">${rec.name}</div></div>
+        <div><div class="field-label">Roblox UID</div><div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);margin-top:4px">${rec.uid}</div></div>
+        <div><div class="field-label">Status</div><div style="margin-top:4px">${pillFor(rec.status,'ustat')}</div></div>
+        <div><div class="field-label">Linked Case</div><div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--white);margin-top:4px">${rec.linked||'—'}</div></div>
+        <div><div class="field-label">Added By</div><div style="font-size:13px;color:var(--white);margin-top:4px">${rec.added}</div></div>
+        <div><div class="field-label">Date Added</div><div style="font-size:13px;color:var(--muted);margin-top:4px">${rec.date}</div></div>
+      </div>`;
+  }
+
+  // Notes
+  renderNotesPanel(rec);
+
+  // Edit
+  if (type === 'case') {
+    document.getElementById('edit-content').innerHTML = `
+      <div class="field-grid">
+        <div class="field-group"><label class="field-label">Title</label><input class="field-input" id="edit-title" type="text" value="${rec.title}"/></div>
+        <div class="field-group"><label class="field-label">Status</label>
+          <select class="field-input" id="edit-status">
+            ${['Open','Pending','Urgent','Closed'].map(s=>`<option${rec.status===s?' selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field-group"><label class="field-label">Priority</label>
+          <select class="field-input" id="edit-priority">
+            ${['Normal','High','Urgent'].map(s=>`<option${rec.priority===s?' selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field-group"><label class="field-label">Assigned To</label><input class="field-input" id="edit-assigned" type="text" value="${rec.assigned}"/></div>
+        <div class="field-group"><label class="field-label">Roblox Username</label><input class="field-input" id="edit-user" type="text" value="${rec.user||''}"/></div>
+        <div class="field-group"><label class="field-label">Roblox UID</label><input class="field-input" id="edit-uid" type="text" value="${rec.uid||''}"/></div>
+      </div>`;
+  } else {
+    document.getElementById('edit-content').innerHTML = `
+      <div class="field-grid">
+        <div class="field-group"><label class="field-label">Username</label><input class="field-input" id="edit-name" type="text" value="${rec.name}"/></div>
+        <div class="field-group"><label class="field-label">Roblox UID</label><input class="field-input" id="edit-uid" type="text" value="${rec.uid}"/></div>
+        <div class="field-group"><label class="field-label">Status</label>
+          <select class="field-input" id="edit-ustatus">
+            ${['Monitored','Flagged','Cleared','Banned'].map(s=>`<option${rec.status===s?' selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field-group"><label class="field-label">Linked Case</label><input class="field-input" id="edit-linked" type="text" value="${rec.linked||''}"/></div>
+      </div>`;
+  }
+
+  // reset to overview tab
+  switchTab('overview');
+}
+
+function renderNotesPanel(rec) {
+  const notes = rec.notes || [];
+  const list = document.getElementById('notes-list');
+  if (!notes.length) {
+    list.innerHTML = '<div class="empty-state" style="padding:12px 0">No notes yet. Add the first one below.</div>';
+    return;
+  }
+  list.innerHTML = notes.map((n, i) => `<div class="note-item">
+    <div class="note-meta">
+      <span>${n.by} · ${n.time}</span>
+      ${isSupervisor ? `<button class="note-del" onclick="deleteNote(${i})">✕</button>` : ''}
+    </div>
+    <div class="note-body">${n.text}</div>
+  </div>`).join('');
+}
+
+function addNote() {
+  const text = document.getElementById('new-note-text').value.trim();
+  if (!text) return;
+  const a = JSON.parse(sessionStorage.getItem('afp_auth') || '{}');
+  const now = new Date().toLocaleString('en-AU', {dateStyle:'short', timeStyle:'short'});
+  const note = { by: a.id || 'Unknown', time: now, text };
+
+  if (currentDetailType === 'case') {
+    const rec = cases.find(c => c.id === currentDetailId);
+    if (!rec) return;
+    rec.notes = rec.notes || [];
+    rec.notes.push(note);
+    renderNotesPanel(rec);
+    logAction(a.id, 'Note added', `${rec.id}: ${text.substring(0,60)}`);
+  } else {
+    const rec = profiles.find(p => p.uid === currentDetailId);
+    if (!rec) return;
+    rec.notes = rec.notes || [];
+    rec.notes.push(note);
+    renderNotesPanel(rec);
+    logAction(a.id, 'Note added', `Profile ${rec.name}: ${text.substring(0,60)}`);
+  }
+  document.getElementById('new-note-text').value = '';
+  save();
+  toast('Note saved');
+}
+
+function deleteNote(idx) {
+  if (!isSupervisor) return;
+  if (currentDetailType === 'case') {
+    const rec = cases.find(c => c.id === currentDetailId);
+    if (rec) { rec.notes.splice(idx,1); renderNotesPanel(rec); save(); }
+  } else {
+    const rec = profiles.find(p => p.uid === currentDetailId);
+    if (rec) { rec.notes.splice(idx,1); renderNotesPanel(rec); save(); }
+  }
+  toast('Note deleted');
+}
+
+function saveEdit() {
+  const a = JSON.parse(sessionStorage.getItem('afp_auth') || '{}');
+  if (currentDetailType === 'case') {
+    const rec = cases.find(c => c.id === currentDetailId);
+    if (!rec) return;
+    rec.title = document.getElementById('edit-title').value;
+    rec.status = document.getElementById('edit-status').value;
+    rec.priority = document.getElementById('edit-priority').value;
+    rec.assigned = document.getElementById('edit-assigned').value;
+    rec.user = document.getElementById('edit-user').value;
+    rec.uid = document.getElementById('edit-uid').value;
+    logAction(a.id, 'Case updated', `${rec.id}: ${rec.title}`);
+  } else {
+    const rec = profiles.find(p => p.uid === currentDetailId);
+    if (!rec) return;
+    rec.name = document.getElementById('edit-name').value;
+    rec.uid = document.getElementById('edit-uid').value;
+    rec.status = document.getElementById('edit-ustatus').value;
+    rec.linked = document.getElementById('edit-linked').value;
+    logAction(a.id, 'Profile updated', `${rec.name} (${rec.uid})`);
+  }
+  save();
+  updateStats();
+  renderCasesTable();
+  renderUsersTable();
+  closeDetailPanel();
+  toast('Changes saved');
+}
+
+function deleteRecord() {
+  if (!isSupervisor) return;
+  const a = JSON.parse(sessionStorage.getItem('afp_auth') || '{}');
+  if (currentDetailType === 'case') {
+    cases = cases.filter(c => c.id !== currentDetailId);
+    logAction(a.id, 'Case deleted', currentDetailId);
+  } else {
+    profiles = profiles.filter(p => p.uid !== currentDetailId);
+    logAction(a.id, 'Profile deleted', currentDetailId);
+  }
+  save(); updateStats(); renderCasesTable(); renderUsersTable();
+  closeDetailPanel(); toast('Record deleted');
+}
+
+function archiveRecord() {
+  if (!isSupervisor) return;
+  if (currentDetailType === 'case') {
+    const rec = cases.find(c => c.id === currentDetailId);
+    if (rec) { rec.status = 'Closed'; save(); }
+  }
+  closeDetailPanel(); toast('Record archived');
+}
+
+function closeDetail(e) { if (e.target === document.getElementById('detail-overlay')) closeDetailPanel(); }
+function closeDetailPanel() { document.getElementById('detail-overlay').classList.remove('open'); }
+
+function switchTab(t) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    const tabs = ['overview','notes','edit','admin'];
+    b.classList.toggle('active', tabs[i] === t);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + t).classList.add('active');
+}
+
+/* ── MODALS ── */
+function openAddModal() { document.getElementById('add-user-modal').classList.add('open'); }
+function openAddCaseModal() { document.getElementById('add-case-modal').classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function submitAddUser() {
+  const name = document.getElementById('au-name').value.trim();
+  const uid = document.getElementById('au-uid').value.trim();
+  if (!name) { toast('Username required'); return; }
+  const a = JSON.parse(sessionStorage.getItem('afp_auth') || '{}');
+  const today = new Date().toISOString().split('T')[0];
+  const notes = document.getElementById('au-notes').value.trim();
+  profiles.unshift({
+    name, uid: uid||'—',
+    status: document.getElementById('au-status').value,
+    linked: document.getElementById('au-case').value.trim() || '—',
+    added: a.id || 'Unknown', date: today,
+    notes: notes ? [{by:a.id,time:new Date().toLocaleString('en-AU',{dateStyle:'short',timeStyle:'short'}),text:notes}] : []
+  });
+  save(); updateStats(); renderUsersTable();
+  closeModal('add-user-modal');
+  logAction(a.id, 'Profile added', `${name} (${uid})`);
+  toast('Profile added');
+  ['au-name','au-uid','au-case','au-notes'].forEach(id => document.getElementById(id).value = '');
+}
+
+function submitAddCase() {
+  const title = document.getElementById('ac-title').value.trim();
+  if (!title) { toast('Title required'); return; }
+  const a = JSON.parse(sessionStorage.getItem('afp_auth') || '{}');
+  const today = new Date().toISOString().split('T')[0];
+  const cid = document.getElementById('ac-id').value.trim() || 'AFP-' + today.replace(/-/g,'').slice(2) + '-' + String(cases.length+1).padStart(3,'0');
+  const notes = document.getElementById('ac-notes').value.trim();
+  cases.unshift({
+    id: cid, title,
+    user: document.getElementById('ac-user').value.trim() || '—',
+    uid: document.getElementById('ac-uid').value.trim() || '—',
+    priority: document.getElementById('ac-priority').value,
+    assigned: document.getElementById('ac-assigned').value.trim() || a.id || 'Unassigned',
+    status: 'Open', date: today,
+    notes: notes ? [{by:a.id,time:new Date().toLocaleString('en-AU',{dateStyle:'short',timeStyle:'short'}),text:notes}] : []
+  });
+  save(); updateStats(); renderCasesTable();
+  closeModal('add-case-modal');
+  logAction(a.id, 'Case created', `${cid}: ${title}`);
+  toast('Case created');
+  ['ac-id','ac-title','ac-user','ac-uid','ac-assigned','ac-notes'].forEach(id => document.getElementById(id).value = '');
+}
+
+/* ── LOG ── */
+function logAction(officer, action, detail) {
+  const now = new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+  activityLog.unshift({time:now,officer,action,detail});
+  renderLog();
+  sendToDiscord(officer, action, detail);
+}
+
+function renderLog() {
+  const el = document.getElementById('log-list');
+  if (!activityLog.length) { el.innerHTML = '<div class="empty-state">No activity yet this session.</div>'; return; }
+  el.innerHTML = activityLog.slice(0,50).map(l => `<div class="log-item">
+    <div class="log-time">${l.time}</div>
+    <div class="log-text"><span>${l.officer}</span> — ${l.action}: ${l.detail}</div>
+  </div>`).join('');
+}
+
+async function sendToDiscord(officer, action, detail) {
+  try {
+    await fetch(WEBHOOK, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ embeds: [{ title: 'AFP Portal — ' + action, description: detail, color: 0x001f5e,
+        fields:[{name:'Officer',value:officer,inline:true},{name:'Role',value:auth.role||'?',inline:true},{name:'Time',value:new Date().toLocaleString('en-AU'),inline:false}],
+        footer:{text:'Australian Federal Police — Investigator Portal'} }] })
+    });
+  } catch(e) {}
+}
+
+/* ── NOTEPAD ── */
+function saveNotepad() {
+  localStorage.setItem('afp_notepad', document.getElementById('notepad-text').value);
+}
+
+function loadNotepad() {
+  const saved = localStorage.getItem('afp_notepad');
+  if (saved) document.getElementById('notepad-text').value = saved;
+}
+
+/* ── RIGHT PANEL TABS ── */
+function switchRpTab(t) {
+  document.querySelectorAll('.rp-tab').forEach((b,i) => b.classList.toggle('active', ['notepad','qrf'][i] === t));
+  document.getElementById('rp-notepad').style.display = t === 'notepad' ? 'block' : 'none';
+  document.getElementById('rp-qrf').style.display = t === 'qrf' ? 'block' : 'none';
+}
+
+/* ── TOAST ── */
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+/* ── ADMIN ── */
+function adminAddUser() {
+  if (!isSupervisor) return;
+  toast('Officer added (session only — integrate backend for persistence)');
+}
+</script>
+</body>
+</html>
