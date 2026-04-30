@@ -48,17 +48,11 @@
   .msg.info { background:rgba(200,168,75,0.07); border:1px solid rgba(200,168,75,0.2); color:var(--gold); }
   .footer { text-align:center; margin-top:20px; font-size:10px; color:rgba(138,150,176,0.4); font-family:'IBM Plex Mono',monospace; letter-spacing:0.5px; line-height:1.6; }
   hr { border:none; border-top:1px solid rgba(255,255,255,0.06); margin:20px 0; }
-  .config-banner { background:rgba(217,64,64,0.08); border:1px solid rgba(217,64,64,0.25); border-radius:3px; padding:10px 14px; font-size:11px; font-family:'IBM Plex Mono',monospace; color:#f08080; margin-bottom:16px; display:none; line-height:1.6; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="card">
-    <div class="config-banner" id="config-banner">
-      ⚠ Firebase not configured.<br>
-      Edit firebaseConfig in login.html &amp; portal.html.<br>
-      Using demo credentials for now.
-    </div>
     <div class="logo-row">
       <div class="crest"><span>AFP</span></div>
       <div class="logo-text"><h1>Australian Federal Police</h1><p>Investigator Portal</p></div>
@@ -83,10 +77,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-// ══════════════════════════════════════════════════════════════
-//  PASTE YOUR FIREBASE CONFIG HERE (same in portal.html)
-//  Firebase Console → Project Settings → Web App → Config
-// ══════════════════════════════════════════════════════════════
 const firebaseConfig = {
   apiKey:            "AIzaSyCytfL6gcCqCZZjps03OOsq14ipYZhldnc",
   authDomain:        "afp-project-39dff.firebaseapp.com",
@@ -97,22 +87,10 @@ const firebaseConfig = {
   appId:             "1:347541722596:web:d38f0a2f7148ebccd4a3f1"
 };
 
-const CONFIGURED = !firebaseConfig.apiKey.includes('PASTE');
-if (!CONFIGURED) document.getElementById('config-banner').style.display = 'block';
-
-// Demo fallback credentials (used when Firebase not configured)
-const DEMO_CREDS = {
-  investigator: [{ id:'DET-4421', pass:'afp2025' }],
-  supervisor:   [{ id:'SUP-0001', pass:'supervisor2025' }]
-};
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
 
 let selectedRole = 'investigator';
-let app, db;
-
-if (CONFIGURED) {
-  app = initializeApp(firebaseConfig);
-  db  = getDatabase(app);
-}
 
 window.selectRole = (role) => {
   selectedRole = role;
@@ -120,7 +98,7 @@ window.selectRole = (role) => {
   document.getElementById('btn-sup').classList.toggle('active', role === 'supervisor');
 };
 
-document.getElementById('pwd').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+document.getElementById('pwd').addEventListener('keydown', e => { if (e.key==='Enter') window.doLogin(); });
 
 function showErr(msg) {
   const el = document.getElementById('err-msg');
@@ -143,28 +121,16 @@ window.doLogin = async () => {
 
   if (!id || !pass) { showErr('Please enter your ID and passphrase.'); return; }
 
-  if (!CONFIGURED) {
-    const match = (DEMO_CREDS[selectedRole]||[]).find(u => u.id===id && u.pass===pass);
-    if (match) {
-      sessionStorage.setItem('afp_auth', JSON.stringify({ id, role:selectedRole, displayName:id }));
-      window.location.href = 'portal.html';
-    } else {
-      showErr('Invalid credentials. Access denied.');
-      document.getElementById('pwd').value = '';
-    }
-    return;
-  }
-
   btn.disabled = true;
   showInfo('Verifying credentials...');
 
   try {
-    const safeId = id.replace(/[.#$[\]]/g,'_');
+    const safeId = id.replace(/[.#$[\]]/g, '_');
     const snap = await get(ref(db, `officers/${selectedRole}/${safeId}`));
     if (!snap.exists() || snap.val().pass !== pass) throw new Error('invalid');
     const officer = snap.val();
     sessionStorage.setItem('afp_auth', JSON.stringify({
-      id, role:selectedRole,
+      id, role: selectedRole,
       displayName: officer.displayName || id,
       rank: officer.rank || selectedRole
     }));
@@ -172,314 +138,10 @@ window.doLogin = async () => {
     setTimeout(() => { window.location.href = 'portal.html'; }, 500);
   } catch(e) {
     btn.disabled = false;
-    showErr(e.message === 'invalid' ? 'Invalid credentials. Access denied.' : 'Server error — check Firebase config.');
+    showErr(e.message === 'invalid' ? 'Invalid credentials. Access denied.' : 'Server error — check Firebase rules are set to allow read/write.');
     document.getElementById('pwd').value = '';
   }
 };
-</script>
-</body>
-</html>
-
-  .logo-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 32px;
-  }
-
-  .afp-crest {
-    width: 52px;
-    height: 52px;
-    background: var(--navy);
-    border: 1.5px solid var(--gold);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .afp-crest span {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--gold);
-    letter-spacing: 1px;
-  }
-
-  .logo-text h1 {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--white);
-    letter-spacing: 0.5px;
-    line-height: 1.2;
-  }
-
-  .logo-text p {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-top: 2px;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .classified-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(200,168,75,0.08);
-    border: 1px solid rgba(200,168,75,0.2);
-    border-radius: 2px;
-    padding: 4px 10px;
-    font-size: 10px;
-    font-family: 'IBM Plex Mono', monospace;
-    color: var(--gold);
-    letter-spacing: 1.5px;
-    margin-bottom: 24px;
-  }
-
-  .classified-tag::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--gold);
-    animation: blink 2s ease-in-out infinite;
-  }
-
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-  .form-group {
-    margin-bottom: 16px;
-  }
-
-  .form-group label {
-    display: block;
-    font-size: 11px;
-    font-family: 'IBM Plex Mono', monospace;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 7px;
-  }
-
-  .form-group input, .form-group select {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 3px;
-    padding: 11px 14px;
-    font-size: 14px;
-    color: var(--white);
-    font-family: 'IBM Plex Sans', sans-serif;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-  }
-
-  .form-group input:focus, .form-group select:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(200,168,75,0.12);
-  }
-
-  .form-group select option { background: var(--surface2); }
-
-  .perm-select {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-
-  .perm-btn {
-    padding: 10px;
-    background: var(--surface2);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-  }
-
-  .perm-btn:hover { border-color: var(--gold); }
-  .perm-btn.active {
-    background: rgba(0,31,94,0.6);
-    border-color: var(--gold);
-  }
-
-  .perm-btn .perm-icon {
-    font-size: 18px;
-    margin-bottom: 4px;
-    display: block;
-  }
-
-  .perm-btn .perm-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--white);
-    display: block;
-  }
-
-  .perm-btn .perm-desc {
-    font-size: 10px;
-    color: var(--muted);
-    font-family: 'IBM Plex Mono', monospace;
-    display: block;
-    margin-top: 2px;
-  }
-
-  .perm-btn.active .perm-name { color: var(--gold); }
-
-  .login-btn {
-    width: 100%;
-    background: var(--navy);
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 13px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 8px;
-  }
-
-  .login-btn:hover {
-    background: var(--navy-light);
-    box-shadow: 0 0 20px rgba(200,168,75,0.2);
-  }
-
-  .login-btn:active { transform: scale(0.99); }
-
-  .error-msg {
-    background: rgba(217,64,64,0.1);
-    border: 1px solid rgba(217,64,64,0.3);
-    border-radius: 3px;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: #f08080;
-    font-family: 'IBM Plex Mono', monospace;
-    margin-top: 12px;
-    display: none;
-  }
-
-  .footer-info {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 10px;
-    color: rgba(138,150,176,0.5);
-    font-family: 'IBM Plex Mono', monospace;
-    letter-spacing: 0.5px;
-    line-height: 1.6;
-  }
-
-  .divider {
-    border: none;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    margin: 20px 0;
-  }
-</style>
-</head>
-<body>
-
-<div class="login-wrap">
-  <div class="login-card">
-    <div class="logo-row">
-      <div class="afp-crest"><span>AFP</span></div>
-      <div class="logo-text">
-        <h1>Australian Federal Police</h1>
-        <p>Investigator Portal</p>
-      </div>
-    </div>
-
-    <div class="classified-tag">RESTRICTED ACCESS</div>
-
-    <div class="form-group">
-      <label>Badge / Officer ID</label>
-      <input type="text" id="username" placeholder="e.g. DET-4421" autocomplete="off" />
-    </div>
-
-    <div class="form-group">
-      <label>Passphrase</label>
-      <input type="password" id="password" placeholder="••••••••••" />
-    </div>
-
-    <hr class="divider">
-
-    <div style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Access Level</div>
-
-    <div class="perm-select">
-      <div class="perm-btn active" id="btn-investigator" onclick="selectRole('investigator')">
-        <span class="perm-icon">🔍</span>
-        <span class="perm-name">Investigator</span>
-        <span class="perm-desc">Standard access</span>
-      </div>
-      <div class="perm-btn" id="btn-supervisor" onclick="selectRole('supervisor')">
-        <span class="perm-icon">⚖️</span>
-        <span class="perm-name">Supervisor</span>
-        <span class="perm-desc">Full access</span>
-      </div>
-    </div>
-
-    <button class="login-btn" onclick="doLogin()">Authenticate →</button>
-    <div class="error-msg" id="error-msg">Invalid credentials. Access denied.</div>
-  </div>
-
-  <div class="footer-info">
-    Unauthorised access is a criminal offence under the<br>
-    Criminal Code Act 1995 (Cth) s.478.1<br><br>
-    All sessions are logged and monitored.
-  </div>
-</div>
-
-<script>
-  /* ── CREDENTIALS ─────────────────────────────────────────
-     Change these! Passwords stored here are plaintext for
-     simplicity — in production use a real auth backend.
-  ──────────────────────────────────────────────────────── */
-  const USERS = {
-    investigator: [
-      { id: "DET-4421", pass: "afp2025" },
-      { id: "DET-1138", pass: "patrol99" },
-    ],
-    supervisor: [
-      { id: "boeingliam", pass: "boeingliam" },
-      { id: "09100", pass: "Tomiristevski091012" },
-      { id: "19820", pass: "Spark7171" },
-    ]
-  };
-
-  let selectedRole = 'investigator';
-
-  function selectRole(role) {
-    selectedRole = role;
-    document.getElementById('btn-investigator').classList.toggle('active', role === 'investigator');
-    document.getElementById('btn-supervisor').classList.toggle('active', role === 'supervisor');
-  }
-
-  document.getElementById('password').addEventListener('keydown', e => {
-    if (e.key === 'Enter') doLogin();
-  });
-
-  function doLogin() {
-    const id = document.getElementById('username').value.trim();
-    const pass = document.getElementById('password').value.trim();
-    const err = document.getElementById('error-msg');
-
-    const list = USERS[selectedRole] || [];
-    const match = list.find(u => u.id === id && u.pass === pass);
-
-    if (match) {
-      sessionStorage.setItem('afp_auth', JSON.stringify({ id, role: selectedRole }));
-      window.location.href = 'portal.html';
-    } else {
-      err.style.display = 'block';
-      document.getElementById('password').value = '';
-      setTimeout(() => err.style.display = 'none', 3000);
-    }
-  }
 </script>
 </body>
 </html>
