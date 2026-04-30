@@ -5,86 +5,180 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AFP Investigator Portal — Login</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
-
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --navy: #001f5e;
-    --navy-dark: #001040;
-    --navy-light: #002d8a;
-    --gold: #c8a84b;
-    --gold-light: #e2c472;
-    --white: #f4f6fa;
-    --muted: #8a96b0;
-    --border: rgba(200,168,75,0.25);
-    --bg: #060d1e;
-    --surface: #0a1628;
-    --surface2: #0f1f3a;
-    --red: #d94040;
-    --green: #2db87a;
+    --navy:#001f5e; --gold:#c8a84b;
+    --white:#f4f6fa; --muted:#8a96b0;
+    --bg:#060d1e; --surface:#0a1628; --surface2:#0f1f3a;
+    --red:#d94040;
+  }
+  body { font-family:'IBM Plex Sans',sans-serif; background:var(--bg); min-height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,31,94,0.3) 1px,transparent 1px),linear-gradient(90deg,rgba(0,31,94,0.3) 1px,transparent 1px); background-size:40px 40px; animation:gs 20s linear infinite; pointer-events:none; }
+  body::after { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 60% 60% at 50% 50%,transparent 30%,var(--bg) 100%); pointer-events:none; }
+  @keyframes gs { 0%{background-position:0 0} 100%{background-position:40px 40px} }
+  .wrap { position:relative; z-index:10; width:100%; max-width:440px; padding:0 20px; }
+  .card { background:var(--surface); border:1px solid rgba(200,168,75,0.25); border-radius:4px; padding:44px 40px 36px; position:relative; }
+  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--navy),var(--gold),var(--navy)); }
+  .logo-row { display:flex; align-items:center; gap:14px; margin-bottom:32px; }
+  .crest { width:52px; height:52px; background:var(--navy); border:1.5px solid var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .crest span { font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:500; color:var(--gold); letter-spacing:1px; }
+  .logo-text h1 { font-size:15px; font-weight:600; color:var(--white); line-height:1.2; }
+  .logo-text p { font-size:11px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; font-family:'IBM Plex Mono',monospace; }
+  .tag { display:inline-flex; align-items:center; gap:6px; background:rgba(200,168,75,0.08); border:1px solid rgba(200,168,75,0.2); border-radius:2px; padding:4px 10px; font-size:10px; font-family:'IBM Plex Mono',monospace; color:var(--gold); letter-spacing:1.5px; margin-bottom:24px; }
+  .tag::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--gold); animation:blink 2s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .fg { margin-bottom:16px; }
+  .fg label { display:block; font-size:11px; font-family:'IBM Plex Mono',monospace; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:7px; }
+  .fg input { width:100%; background:var(--surface2); border:1px solid rgba(255,255,255,0.1); border-radius:3px; padding:11px 14px; font-size:14px; color:var(--white); font-family:'IBM Plex Sans',sans-serif; outline:none; transition:border-color 0.2s,box-shadow 0.2s; }
+  .fg input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(200,168,75,0.12); }
+  .role-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:20px; }
+  .role-btn { padding:10px; background:var(--surface2); border:1px solid rgba(255,255,255,0.1); border-radius:3px; cursor:pointer; text-align:center; transition:all 0.2s; }
+  .role-btn:hover { border-color:var(--gold); }
+  .role-btn.active { background:rgba(0,31,94,0.6); border-color:var(--gold); }
+  .role-btn .ri { font-size:18px; margin-bottom:4px; display:block; }
+  .role-btn .rn { font-size:12px; font-weight:500; color:var(--white); display:block; }
+  .role-btn .rd { font-size:10px; color:var(--muted); font-family:'IBM Plex Mono',monospace; display:block; margin-top:2px; }
+  .role-btn.active .rn { color:var(--gold); }
+  .login-btn { width:100%; background:var(--navy); border:1px solid var(--gold); color:var(--gold); font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:13px; border-radius:3px; cursor:pointer; transition:all 0.2s; margin-top:8px; }
+  .login-btn:hover { background:#002d8a; box-shadow:0 0 20px rgba(200,168,75,0.2); }
+  .login-btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .msg { border-radius:3px; padding:10px 14px; font-size:12px; font-family:'IBM Plex Mono',monospace; margin-top:12px; display:none; }
+  .msg.err { background:rgba(217,64,64,0.1); border:1px solid rgba(217,64,64,0.3); color:#f08080; }
+  .msg.info { background:rgba(200,168,75,0.07); border:1px solid rgba(200,168,75,0.2); color:var(--gold); }
+  .footer { text-align:center; margin-top:20px; font-size:10px; color:rgba(138,150,176,0.4); font-family:'IBM Plex Mono',monospace; letter-spacing:0.5px; line-height:1.6; }
+  hr { border:none; border-top:1px solid rgba(255,255,255,0.06); margin:20px 0; }
+  .config-banner { background:rgba(217,64,64,0.08); border:1px solid rgba(217,64,64,0.25); border-radius:3px; padding:10px 14px; font-size:11px; font-family:'IBM Plex Mono',monospace; color:#f08080; margin-bottom:16px; display:none; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="config-banner" id="config-banner">
+      ⚠ Firebase not configured.<br>
+      Edit firebaseConfig in login.html &amp; portal.html.<br>
+      Using demo credentials for now.
+    </div>
+    <div class="logo-row">
+      <div class="crest"><span>AFP</span></div>
+      <div class="logo-text"><h1>Australian Federal Police</h1><p>Investigator Portal</p></div>
+    </div>
+    <div class="tag">RESTRICTED ACCESS</div>
+    <div class="fg"><label>Badge / Officer ID</label><input type="text" id="uid" placeholder="e.g. DET-4421" autocomplete="off"/></div>
+    <div class="fg"><label>Passphrase</label><input type="password" id="pwd" placeholder="••••••••••"/></div>
+    <hr>
+    <div style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Access Level</div>
+    <div class="role-grid">
+      <div class="role-btn active" id="btn-inv" onclick="selectRole('investigator')"><span class="ri">🔍</span><span class="rn">Investigator</span><span class="rd">Standard access</span></div>
+      <div class="role-btn" id="btn-sup" onclick="selectRole('supervisor')"><span class="ri">⚖️</span><span class="rn">Supervisor</span><span class="rd">Full access</span></div>
+    </div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Authenticate →</button>
+    <div class="msg err" id="err-msg"></div>
+    <div class="msg info" id="info-msg"></div>
+  </div>
+  <div class="footer">Unauthorised access is a criminal offence under the<br>Criminal Code Act 1995 (Cth) s.478.1<br><br>All sessions are logged and monitored.</div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+// ══════════════════════════════════════════════════════════════
+//  PASTE YOUR FIREBASE CONFIG HERE (same in portal.html)
+//  Firebase Console → Project Settings → Web App → Config
+// ══════════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey:            "AIzaSyCytfL6gcCqCZZjps03OOsq14ipYZhldnc",
+  authDomain:        "afp-project-39dff.firebaseapp.com",
+  databaseURL:       "https://afp-project-39dff-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "afp-project-39dff",
+  storageBucket:     "afp-project-39dff.firebasestorage.app",
+  messagingSenderId: "347541722596",
+  appId:             "1:347541722596:web:d38f0a2f7148ebccd4a3f1"
+};
+
+const CONFIGURED = !firebaseConfig.apiKey.includes('PASTE');
+if (!CONFIGURED) document.getElementById('config-banner').style.display = 'block';
+
+// Demo fallback credentials (used when Firebase not configured)
+const DEMO_CREDS = {
+  investigator: [{ id:'DET-4421', pass:'afp2025' }],
+  supervisor:   [{ id:'SUP-0001', pass:'supervisor2025' }]
+};
+
+let selectedRole = 'investigator';
+let app, db;
+
+if (CONFIGURED) {
+  app = initializeApp(firebaseConfig);
+  db  = getDatabase(app);
+}
+
+window.selectRole = (role) => {
+  selectedRole = role;
+  document.getElementById('btn-inv').classList.toggle('active', role === 'investigator');
+  document.getElementById('btn-sup').classList.toggle('active', role === 'supervisor');
+};
+
+document.getElementById('pwd').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+
+function showErr(msg) {
+  const el = document.getElementById('err-msg');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('info-msg').style.display = 'none';
+}
+function showInfo(msg) {
+  const el = document.getElementById('info-msg');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('err-msg').style.display = 'none';
+}
+
+window.doLogin = async () => {
+  const id   = document.getElementById('uid').value.trim();
+  const pass = document.getElementById('pwd').value.trim();
+  const btn  = document.getElementById('login-btn');
+
+  document.getElementById('err-msg').style.display  = 'none';
+  document.getElementById('info-msg').style.display = 'none';
+
+  if (!id || !pass) { showErr('Please enter your ID and passphrase.'); return; }
+
+  if (!CONFIGURED) {
+    const match = (DEMO_CREDS[selectedRole]||[]).find(u => u.id===id && u.pass===pass);
+    if (match) {
+      sessionStorage.setItem('afp_auth', JSON.stringify({ id, role:selectedRole, displayName:id }));
+      window.location.href = 'portal.html';
+    } else {
+      showErr('Invalid credentials. Access denied.');
+      document.getElementById('pwd').value = '';
+    }
+    return;
   }
 
-  body {
-    font-family: 'IBM Plex Sans', sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-  }
+  btn.disabled = true;
+  showInfo('Verifying credentials...');
 
-  /* animated grid background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,31,94,0.3) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,31,94,0.3) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: gridScroll 20s linear infinite;
-    pointer-events: none;
+  try {
+    const safeId = id.replace(/[.#$[\]]/g,'_');
+    const snap = await get(ref(db, `officers/${selectedRole}/${safeId}`));
+    if (!snap.exists() || snap.val().pass !== pass) throw new Error('invalid');
+    const officer = snap.val();
+    sessionStorage.setItem('afp_auth', JSON.stringify({
+      id, role:selectedRole,
+      displayName: officer.displayName || id,
+      rank: officer.rank || selectedRole
+    }));
+    showInfo('Access granted. Redirecting...');
+    setTimeout(() => { window.location.href = 'portal.html'; }, 500);
+  } catch(e) {
+    btn.disabled = false;
+    showErr(e.message === 'invalid' ? 'Invalid credentials. Access denied.' : 'Server error — check Firebase config.');
+    document.getElementById('pwd').value = '';
   }
-
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(ellipse 60% 60% at 50% 50%, transparent 30%, var(--bg) 100%);
-    pointer-events: none;
-  }
-
-  @keyframes gridScroll {
-    0% { background-position: 0 0; }
-    100% { background-position: 40px 40px; }
-  }
-
-  .login-wrap {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    max-width: 440px;
-    padding: 0 20px;
-  }
-
-  .login-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 44px 40px 36px;
-    position: relative;
-  }
-
-  .login-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--navy), var(--gold), var(--navy));
-  }
+};
+</script>
+</body>
+</html>
 
   .logo-row {
     display: flex;
