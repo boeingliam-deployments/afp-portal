@@ -1042,6 +1042,7 @@ window.openEditOfficer = async (role, key) => {
   const o = snap.val();
   document.getElementById('eo-role').value    = role;
   document.getElementById('eo-key').value     = key;
+  document.getElementById('eo-badgeid').value = key.replace(/_/g,'-');
   document.getElementById('eo-name').value    = o.displayName || '';
   document.getElementById('eo-pass').value    = '';
   document.getElementById('eo-newrole').value = role;
@@ -1051,26 +1052,33 @@ window.openEditOfficer = async (role, key) => {
 
 window.saveEditOfficer = async () => {
   if (!isSupervisor) return;
-  const oldRole = document.getElementById('eo-role').value;
-  const key     = document.getElementById('eo-key').value;
-  const newRole = document.getElementById('eo-newrole').value;
-  const name    = document.getElementById('eo-name').value.trim();
-  const pass    = document.getElementById('eo-pass').value.trim();
+  const oldRole  = document.getElementById('eo-role').value;
+  const oldKey   = document.getElementById('eo-key').value;
+  const newRole  = document.getElementById('eo-newrole').value;
+  const name     = document.getElementById('eo-name').value.trim();
+  const pass     = document.getElementById('eo-pass').value.trim();
+  const newBadge = document.getElementById('eo-badgeid').value.trim();
+  const newKey   = newBadge ? newBadge.replace(/[.#$[\]]/g,'_') : oldKey;
 
-  const updates = { displayName: name, rank: newRole };
-  if (pass) updates.pass = pass;
+  // Fetch existing record to preserve all fields
+  const snap = await get(ref(db, `officers/${oldRole}/${oldKey}`));
+  const existing = snap.val() || {};
 
-  if (oldRole !== newRole) {
-    // Move to different role node
-    const snap = await get(ref(db, `officers/${oldRole}/${key}`));
-    const existing = snap.val() || {};
-    await set(ref(db, `officers/${newRole}/${key}`), {...existing, ...updates});
-    await remove(ref(db, `officers/${oldRole}/${key}`));
+  const updated = { ...existing, displayName: name, rank: newRole };
+  if (pass) updated.pass = pass;
+
+  const roleChanged  = oldRole !== newRole;
+  const badgeChanged = newKey  !== oldKey;
+
+  if (roleChanged || badgeChanged) {
+    // Write to new location then remove old
+    await set(ref(db, `officers/${newRole}/${newKey}`), updated);
+    await remove(ref(db, `officers/${oldRole}/${oldKey}`));
   } else {
-    await update(ref(db, `officers/${oldRole}/${key}`), updates);
+    await update(ref(db, `officers/${oldRole}/${oldKey}`), updated);
   }
 
-  logAction('Officer updated', `${key.replace(/_/g,'-')} → ${newRole}`);
+  logAction('Officer updated', `${oldKey.replace(/_/g,'-')} → ${newKey.replace(/_/g,'-')} (${newRole})`);
   toast('Officer updated');
   closeOverlay('edit-officer-modal');
   loadOfficers();
@@ -1121,7 +1129,10 @@ window.toast = toast;
       <input type="hidden" id="eo-role"/>
       <input type="hidden" id="eo-key"/>
       <div class="fg-grid">
+        <div class="fg-group"><label class="fl">Badge ID / Username</label><input class="fi" type="text" id="eo-badgeid" placeholder="DET-XXXX"/></div>
         <div class="fg-group"><label class="fl">Display Name</label><input class="fi" type="text" id="eo-name" placeholder="Det. Smith"/></div>
+      </div>
+      <div class="fg-grid">
         <div class="fg-group"><label class="fl">New Passphrase <span style="color:var(--muted);font-size:10px">(leave blank to keep)</span></label><input class="fi" type="text" id="eo-pass" placeholder="leave blank to keep current"/></div>
       </div>
       <div class="fg-grid">
