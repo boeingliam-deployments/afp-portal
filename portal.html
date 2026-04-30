@@ -800,7 +800,7 @@ window.addNote = async () => {
   document.getElementById('new-note').value = '';
   const rec = getLocalRec();
   if (rec) renderNotesPanel(rec);
-  logAction('Note added', `${detailKey}: ${text.slice(0,60)}`);
+  logAction('Note added', detailKey, { recordId: detailKey, noteText: text });
   toast('Note saved');
 };
 
@@ -810,6 +810,7 @@ window.deleteNote = async (noteKey) => {
     const basePath = detailType==='case' ? `cases/${detailKey}/notes/${noteKey}` : `profiles/${detailKey}/notes/${noteKey}`;
     await remove(ref(db, basePath));
   }
+  logAction('Note deleted', detailKey, { recordId: detailKey });
   toast('Note deleted');
 };
 
@@ -825,7 +826,7 @@ window.saveEdit = async () => {
     };
     if (CONFIGURED) await update(ref(db,`cases/${detailKey}`), data);
     else { const r=cases.find(c=>(c._key||c.id)===detailKey); if(r) Object.assign(r,data); }
-    logAction('Case updated', `${detailKey}`);
+    logAction('Case updated', detailKey, { case: cases.find(c=>(c._key||c.id)===detailKey)||{} });
   } else {
     const data = {
       name:   document.getElementById('e-name').value,
@@ -835,7 +836,7 @@ window.saveEdit = async () => {
     };
     if (CONFIGURED) await update(ref(db,`profiles/${detailKey}`), data);
     else { const r=profiles.find(p=>(p._key||p.uid)===detailKey); if(r) Object.assign(r,data); }
-    logAction('Profile updated', `${detailKey}`);
+    logAction('Profile updated', detailKey, { profile: profiles.find(p=>(p._key||p.uid)===detailKey)||{} });
   }
   renderCasesTable(); renderProfilesTable(); updateStats();
   closeOverlay('detail-overlay'); toast('Changes saved');
@@ -850,7 +851,7 @@ window.deleteRecord = async () => {
     if (detailType==='case') cases    = cases.filter(c=>(c._key||c.id)!==detailKey);
     else                     profiles = profiles.filter(p=>(p._key||p.uid)!==detailKey);
   }
-  logAction('Record deleted', detailKey);
+  logAction('Record deleted', detailKey, {});
   renderCasesTable(); renderProfilesTable(); updateStats();
   closeOverlay('detail-overlay'); toast('Record deleted');
 };
@@ -860,7 +861,7 @@ window.archiveRecord = async () => {
   if (detailType==='case') {
     if (CONFIGURED) await update(ref(db,`cases/${detailKey}`),{status:'Closed'});
     else { const r=cases.find(c=>(c._key||c.id)===detailKey); if(r) r.status='Closed'; }
-    logAction('Case archived', detailKey);
+    logAction('Case archived', detailKey, {});
   }
   closeOverlay('detail-overlay'); toast('Archived');
 };
@@ -889,7 +890,7 @@ window.submitAddProfile = async () => {
 
   updateStats(); renderProfilesTable();
   closeOverlay('add-profile-modal');
-  logAction('Profile added', `${name} (${rec.uid})`);
+  logAction('Profile added', `${name} (${rec.uid})`, { profile: rec });
   toast('Profile added');
   ['ap-name','ap-uid','ap-case','ap-notes'].forEach(id => document.getElementById(id).value='');
 };
@@ -915,7 +916,7 @@ window.submitAddCase = async () => {
 
   updateStats(); renderCasesTable();
   closeOverlay('add-case-modal');
-  logAction('Case created', `${cid}: ${title}`);
+  logAction('Case created', `${cid}: ${title}`, { case: rec });
   toast('Case created');
   ['ac-id','ac-title','ac-user','ac-uid','ac-assigned','ac-notes'].forEach(id => document.getElementById(id).value='');
 };
@@ -934,13 +935,13 @@ window.quickCreateCase = (name, uid) => {
 };
 
 // ── ACTIVITY LOG ─────────────────────────────────────────────
-async function logAction(action, detail) {
+async function logAction(action, detail, extra) {
   const now  = new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
   const entry = { officer:auth.id||'Unknown', action, detail, time:now, ts: Date.now() };
   if (CONFIGURED) await push(ref(db,'actlog'), entry);
   else actLog.unshift(entry);
   renderLog();
-  sendDiscord(action, detail);
+  sendDiscord(action, detail, extra || {});
 }
 
 function renderLog() {
@@ -953,13 +954,102 @@ function renderLog() {
   </div>`).join('');
 }
 
-async function sendDiscord(action, detail) {
+// ── ACTION CONFIG ─────────────────────────────────────────────
+// Maps action names to colours and emojis
+const ACTION_META = {
+  'Case created':        { color: 0x2db87a, emoji: '📁', category: 'CASE MANAGEMENT' },
+  'Case updated':        { color: 0xc8a84b, emoji: '✏️',  category: 'CASE MANAGEMENT' },
+  'Case archived':       { color: 0x8a96b0, emoji: '📦', category: 'CASE MANAGEMENT' },
+  'Record deleted':      { color: 0xd94040, emoji: '🗑️', category: 'CASE MANAGEMENT' },
+  'Profile added':       { color: 0x2db87a, emoji: '👤', category: 'PROFILE MANAGEMENT' },
+  'Profile updated':     { color: 0xc8a84b, emoji: '✏️',  category: 'PROFILE MANAGEMENT' },
+  'Profile deleted':     { color: 0xd94040, emoji: '🗑️', category: 'PROFILE MANAGEMENT' },
+  'Note added':          { color: 0x7aa3e8, emoji: '📝', category: 'INVESTIGATION NOTE' },
+  'Note deleted':        { color: 0xd94040, emoji: '🗑️', category: 'INVESTIGATION NOTE' },
+  'Officer added':       { color: 0x2db87a, emoji: '👮', category: 'OFFICER MANAGEMENT' },
+  'Officer updated':     { color: 0xc8a84b, emoji: '✏️',  category: 'OFFICER MANAGEMENT' },
+  'Officer deleted':     { color: 0xd94040, emoji: '👮', category: 'OFFICER MANAGEMENT' },
+  'Officer suspended':   { color: 0xe09a30, emoji: '🚫', category: 'OFFICER MANAGEMENT' },
+  'Officer unsuspended': { color: 0x2db87a, emoji: '✅', category: 'OFFICER MANAGEMENT' },
+};
+
+async function sendDiscord(action, detail, extra) {
   try {
-    await fetch(DISCORD_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ embeds:[{ title:`AFP Portal — ${action}`, description:detail, color:0x001f5e,
-        fields:[{name:'Officer',value:auth.id||'?',inline:true},{name:'Role',value:auth.role||'?',inline:true},{name:'Time',value:new Date().toLocaleString('en-AU'),inline:false}],
-        footer:{text:'Australian Federal Police — Investigator Portal'} }] }) });
-  } catch {}
+    const meta    = ACTION_META[action] || { color: 0x001f5e, emoji: '🔔', category: 'SYSTEM' };
+    const now     = new Date();
+    const dateStr = now.toLocaleDateString('en-AU', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    const timeStr = now.toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    const tsUnix  = Math.floor(now.getTime() / 1000);
+
+    // Build fields depending on action type
+    const fields = [];
+
+    // Always: officer info
+    fields.push({ name:'👮  Officer', value:`\`${auth.id||'Unknown'}\`  ${auth.displayName && auth.displayName !== auth.id ? '— ' + auth.displayName : ''}`, inline: true });
+    fields.push({ name:'🎖️  Clearance', value:`\`${(auth.role||'unknown').toUpperCase()}\``, inline: true });
+    fields.push({ name:'​', value:'​', inline: true }); // spacer
+
+    // Action-specific fields
+    if (action === 'Case created' || action === 'Case updated') {
+      const c = extra.case;
+      if (c) {
+        fields.push({ name:'📋  Case ID',   value:`\`${c.id||'—'}\``,         inline: true });
+        fields.push({ name:'📌  Status',    value:`\`${c.status||'—'}\``,     inline: true });
+        fields.push({ name:'⚡  Priority',  value:`\`${c.priority||'—'}\``,   inline: true });
+        fields.push({ name:'👤  Suspect',   value:`\`${c.user||'—'}\`  (UID: \`${c.uid||'—'}\`)`, inline: false });
+        fields.push({ name:'🔎  Assigned',  value:`\`${c.assigned||'—'}\``,   inline: true });
+      }
+    } else if (action === 'Profile added' || action === 'Profile updated') {
+      const p = extra.profile;
+      if (p) {
+        fields.push({ name:'👤  Username',  value:`\`${p.name||'—'}\``,       inline: true });
+        fields.push({ name:'🆔  Roblox UID',value:`\`${p.uid||'—'}\``,        inline: true });
+        fields.push({ name:'🚦  Status',    value:`\`${p.status||'—'}\``,     inline: true });
+        if (p.linked && p.linked !== '—') fields.push({ name:'📋  Linked Case', value:`\`${p.linked}\``, inline: true });
+      }
+    } else if (action === 'Note added') {
+      fields.push({ name:'🗂️  Record',     value:`\`${extra.recordId||detail}\``, inline: true });
+      fields.push({ name:'📝  Note',       value: extra.noteText ? `> ${extra.noteText.slice(0,200)}` : detail, inline: false });
+    } else if (action === 'Officer added' || action === 'Officer updated') {
+      fields.push({ name:'🪪  Badge ID',   value:`\`${extra.badgeId||'—'}\``,  inline: true });
+      fields.push({ name:'🎖️  Role',       value:`\`${extra.newRole||'—'}\``,  inline: true });
+      if (extra.displayName) fields.push({ name:'🏷️  Display Name', value: extra.displayName, inline: true });
+    } else if (action === 'Officer suspended' || action === 'Officer unsuspended') {
+      fields.push({ name:'🪪  Badge ID',   value:`\`${extra.badgeId||detail}\``, inline: true });
+      fields.push({ name:'🎖️  Role',       value:`\`${extra.role||'—'}\``,      inline: true });
+    } else if (action === 'Record deleted' || action === 'Officer deleted') {
+      fields.push({ name:'🗑️  Deleted',    value:`\`${detail}\``, inline: false });
+    } else {
+      // Generic fallback detail field
+      fields.push({ name:'ℹ️  Detail',      value: detail || '—', inline: false });
+    }
+
+    // Always: timestamp
+    fields.push({ name:'🕐  Timestamp', value:`${dateStr}
+${timeStr} AEST  (<t:${tsUnix}:R>)`, inline: false });
+
+    await fetch(DISCORD_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        embeds: [{
+          author: {
+            name: `AFP INVESTIGATOR PORTAL  ·  ${meta.category}`,
+            icon_url: 'https://www.afp.gov.au/sites/default/files/styles/logo/public/2023-07/afp-logo.png'
+          },
+          title: `${meta.emoji}  ${action}`,
+          color: meta.color,
+          fields,
+          footer: {
+            text: 'Australian Federal Police — Secure Investigator Portal  ·  All actions are logged',
+          },
+          timestamp: now.toISOString()
+        }]
+      })
+    });
+  } catch(e) {
+    console.warn('Discord webhook error:', e);
+  }
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────
@@ -973,7 +1063,7 @@ window.adminAddOfficer = async () => {
   if (!CONFIGURED) { toast('Firebase not configured'); return; }
   const safeId = id.replace(/[.#$[\]]/g,'_');
   await set(ref(db,`officers/${role}/${safeId}`), { pass, displayName:name||id, rank:role, suspended:false });
-  logAction('Officer added', `${id} as ${role}`);
+  logAction('Officer added', `${id} as ${role}`, { badgeId: id, newRole: role, displayName: name||id });
   toast(`Officer ${id} added`);
   ['adm-id','adm-pass','adm-name'].forEach(i => document.getElementById(i).value='');
   loadOfficers();
@@ -1021,7 +1111,7 @@ window.loadOfficers = async () => {
 window.toggleSuspend = async (role, key, suspend) => {
   if (!isSupervisor) return;
   await update(ref(db, `officers/${role}/${key}`), { suspended: suspend });
-  logAction(suspend ? 'Officer suspended' : 'Officer unsuspended', `${key.replace(/_/g,'-')} (${role})`);
+  logAction(suspend ? 'Officer suspended' : 'Officer unsuspended', key.replace(/_/g,'-'), { badgeId: key.replace(/_/g,'-'), role });
   toast(suspend ? 'Officer suspended' : 'Officer unsuspended');
   loadOfficers();
 };
@@ -1030,7 +1120,7 @@ window.deleteOfficer = async (role, key) => {
   if (!isSupervisor) return;
   if (!confirm(`Delete officer ${key.replace(/_/g,'-')}? This cannot be undone.`)) return;
   await remove(ref(db, `officers/${role}/${key}`));
-  logAction('Officer deleted', `${key.replace(/_/g,'-')} (${role})`);
+  logAction('Officer deleted', key.replace(/_/g,'-'), { badgeId: key.replace(/_/g,'-'), role });
   toast('Officer deleted');
   loadOfficers();
 };
@@ -1078,7 +1168,7 @@ window.saveEditOfficer = async () => {
     await update(ref(db, `officers/${oldRole}/${oldKey}`), updated);
   }
 
-  logAction('Officer updated', `${oldKey.replace(/_/g,'-')} → ${newKey.replace(/_/g,'-')} (${newRole})`);
+  logAction('Officer updated', `${oldKey.replace(/_/g,'-')} → ${newKey.replace(/_/g,'-')}`, { badgeId: newKey.replace(/_/g,'-'), newRole, displayName: name });
   toast('Officer updated');
   closeOverlay('edit-officer-modal');
   loadOfficers();
