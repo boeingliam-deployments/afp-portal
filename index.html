@@ -128,6 +128,7 @@ window.doLogin = async () => {
     const safeId = id.replace(/[.#$[\]]/g, '_');
     const snap = await get(ref(db, `officers/${selectedRole}/${safeId}`));
     if (!snap.exists() || snap.val().pass !== pass) throw new Error('invalid');
+    if (snap.val().suspended) throw new Error('suspended');
     const officer = snap.val();
     sessionStorage.setItem('afp_auth', JSON.stringify({
       id, role: selectedRole,
@@ -138,7 +139,7 @@ window.doLogin = async () => {
     setTimeout(() => { window.location.href = 'portal.html'; }, 500);
   } catch(e) {
     btn.disabled = false;
-    showErr(e.message === 'invalid' ? 'Invalid credentials. Access denied.' : 'Server error — check Firebase rules are set to allow read/write.');
+    showErr(e.message === 'invalid' ? 'Invalid credentials. Access denied.' : e.message === 'suspended' ? 'Account suspended. Contact your supervisor.' : 'Server error — check Firebase rules are set to allow read/write.');
     document.getElementById('pwd').value = '';
   }
 };
