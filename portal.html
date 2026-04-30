@@ -205,6 +205,13 @@ textarea.fi{resize:vertical;min-height:75px;line-height:1.5}
 /* ── SEARCH LOADING ── */
 .search-loading{text-align:center;padding:16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);animation:pulse 1.5s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* ── OFFICER ROWS ── */
+.officer-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;margin-bottom:7px;gap:10px;flex-wrap:wrap}
+.officer-info{flex:1;min-width:0}
+.officer-id{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--white)}
+.officer-meta{font-size:11px;color:var(--muted);margin-top:3px;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.officer-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -326,11 +333,12 @@ textarea.fi{resize:vertical;min-height:75px;line-height:1.5}
 
     <!-- ADMIN -->
     <div class="view" id="view-admin">
-      <div class="search-panel">
-        <div class="sp-title">⚖️ Supervisor Panel</div>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6">Add officer credentials to Firebase. After saving, they can log in immediately.</p>
+
+      <!-- Add new officer -->
+      <div class="search-panel" style="margin-bottom:16px">
+        <div class="sp-title">➕ Add New Officer</div>
         <div class="fg-grid">
-          <div class="fg-group"><label class="fl">Officer Badge ID</label><input class="fi" type="text" id="adm-id" placeholder="DET-XXXX"/></div>
+          <div class="fg-group"><label class="fl">Badge ID</label><input class="fi" type="text" id="adm-id" placeholder="DET-XXXX"/></div>
           <div class="fg-group"><label class="fl">Passphrase</label><input class="fi" type="text" id="adm-pass" placeholder="passphrase"/></div>
         </div>
         <div class="fg-grid">
@@ -339,6 +347,18 @@ textarea.fi{resize:vertical;min-height:75px;line-height:1.5}
         </div>
         <button class="btn-gold" onclick="adminAddOfficer()">Save to Firebase</button>
       </div>
+
+      <!-- Officer list -->
+      <div class="search-panel">
+        <div class="sp-title" style="display:flex;align-items:center;justify-content:space-between">
+          <span>👮 Officer Accounts</span>
+          <button class="btn-ghost" style="font-size:10px;padding:4px 10px" onclick="loadOfficers()">&#8635; Refresh</button>
+        </div>
+        <div id="officer-list" style="margin-top:12px">
+          <div class="empty">Click Refresh to load officer accounts.</div>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -952,10 +972,108 @@ window.adminAddOfficer = async () => {
   if (!id||!pass) { toast('ID and passphrase required'); return; }
   if (!CONFIGURED) { toast('Firebase not configured'); return; }
   const safeId = id.replace(/[.#$[\]]/g,'_');
-  await set(ref(db,`officers/${role}/${safeId}`), { pass, displayName:name||id, rank:role });
+  await set(ref(db,`officers/${role}/${safeId}`), { pass, displayName:name||id, rank:role, suspended:false });
   logAction('Officer added', `${id} as ${role}`);
   toast(`Officer ${id} added`);
   ['adm-id','adm-pass','adm-name'].forEach(i => document.getElementById(i).value='');
+  loadOfficers();
+};
+
+// ── LOAD & RENDER OFFICERS ────────────────────────────────────
+window.loadOfficers = async () => {
+  if (!isSupervisor || !CONFIGURED) return;
+  const el = document.getElementById('officer-list');
+  el.innerHTML = '<div class="empty">Loading...</div>';
+  try {
+    const [invSnap, supSnap] = await Promise.all([
+      get(ref(db, 'officers/investigator')),
+      get(ref(db, 'officers/supervisor'))
+    ]);
+    let officers = [];
+    if (invSnap.exists()) {
+      Object.entries(invSnap.val()).forEach(([k,v]) => officers.push({...v, _key:k, _role:'investigator'}));
+    }
+    if (supSnap.exists()) {
+      Object.entries(supSnap.val()).forEach(([k,v]) => officers.push({...v, _key:k, _role:'supervisor'}));
+    }
+    if (!officers.length) { el.innerHTML = '<div class="empty">No officers found.</div>'; return; }
+    el.innerHTML = officers.map(o => `
+      <div class="officer-row" id="orow-${o._role}-${o._key}">
+        <div class="officer-info">
+          <div class="officer-id">${o._key.replace(/_/g,'-')}</div>
+          <div class="officer-meta">
+            ${o.displayName || o._key}
+            <span class="pill ${o._role==='supervisor'?'pill-urgent':'pill-open'}" style="margin-left:6px">${o._role}</span>
+            ${o.suspended ? '<span class="pill pill-flagged" style="margin-left:4px">SUSPENDED</span>' : ''}
+          </div>
+        </div>
+        <div class="officer-actions">
+          <button class="btn-ghost" style="font-size:10px;padding:4px 9px" onclick="openEditOfficer('${o._role}','${o._key}')">Edit</button>
+          <button class="btn-ghost" style="font-size:10px;padding:4px 9px;color:var(--amber);border-color:var(--amber-border)" onclick="toggleSuspend('${o._role}','${o._key}',${!o.suspended})">${o.suspended?'Unsuspend':'Suspend'}</button>
+          <button class="btn-danger" style="font-size:10px;padding:4px 9px" onclick="deleteOfficer('${o._role}','${o._key}')">Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    el.innerHTML = `<div class="empty">Error loading officers: ${e.message}</div>`;
+  }
+};
+
+window.toggleSuspend = async (role, key, suspend) => {
+  if (!isSupervisor) return;
+  await update(ref(db, `officers/${role}/${key}`), { suspended: suspend });
+  logAction(suspend ? 'Officer suspended' : 'Officer unsuspended', `${key.replace(/_/g,'-')} (${role})`);
+  toast(suspend ? 'Officer suspended' : 'Officer unsuspended');
+  loadOfficers();
+};
+
+window.deleteOfficer = async (role, key) => {
+  if (!isSupervisor) return;
+  if (!confirm(`Delete officer ${key.replace(/_/g,'-')}? This cannot be undone.`)) return;
+  await remove(ref(db, `officers/${role}/${key}`));
+  logAction('Officer deleted', `${key.replace(/_/g,'-')} (${role})`);
+  toast('Officer deleted');
+  loadOfficers();
+};
+
+window.openEditOfficer = async (role, key) => {
+  if (!isSupervisor) return;
+  const snap = await get(ref(db, `officers/${role}/${key}`));
+  if (!snap.exists()) return;
+  const o = snap.val();
+  document.getElementById('eo-role').value    = role;
+  document.getElementById('eo-key').value     = key;
+  document.getElementById('eo-name').value    = o.displayName || '';
+  document.getElementById('eo-pass').value    = '';
+  document.getElementById('eo-newrole').value = role;
+  document.getElementById('eo-id-display').textContent = key.replace(/_/g,'-');
+  openModal('edit-officer-modal');
+};
+
+window.saveEditOfficer = async () => {
+  if (!isSupervisor) return;
+  const oldRole = document.getElementById('eo-role').value;
+  const key     = document.getElementById('eo-key').value;
+  const newRole = document.getElementById('eo-newrole').value;
+  const name    = document.getElementById('eo-name').value.trim();
+  const pass    = document.getElementById('eo-pass').value.trim();
+
+  const updates = { displayName: name, rank: newRole };
+  if (pass) updates.pass = pass;
+
+  if (oldRole !== newRole) {
+    // Move to different role node
+    const snap = await get(ref(db, `officers/${oldRole}/${key}`));
+    const existing = snap.val() || {};
+    await set(ref(db, `officers/${newRole}/${key}`), {...existing, ...updates});
+    await remove(ref(db, `officers/${oldRole}/${key}`));
+  } else {
+    await update(ref(db, `officers/${oldRole}/${key}`), updates);
+  }
+
+  logAction('Officer updated', `${key.replace(/_/g,'-')} → ${newRole}`);
+  toast('Officer updated');
+  closeOverlay('edit-officer-modal');
+  loadOfficers();
 };
 
 // ── UI HELPERS ────────────────────────────────────────────────
@@ -991,5 +1109,36 @@ function toast(msg) {
 
 window.toast = toast;
 </script>
+
+<!-- ── EDIT OFFICER MODAL ── -->
+<div class="modal-overlay" id="edit-officer-modal" onclick="overlayClick(event,'edit-officer-modal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Edit Officer — <span id="eo-id-display" style="color:var(--gold);font-family:'IBM Plex Mono',monospace"></span></h3>
+      <button class="close-btn" onclick="closeOverlay('edit-officer-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eo-role"/>
+      <input type="hidden" id="eo-key"/>
+      <div class="fg-grid">
+        <div class="fg-group"><label class="fl">Display Name</label><input class="fi" type="text" id="eo-name" placeholder="Det. Smith"/></div>
+        <div class="fg-group"><label class="fl">New Passphrase <span style="color:var(--muted);font-size:10px">(leave blank to keep)</span></label><input class="fi" type="text" id="eo-pass" placeholder="leave blank to keep current"/></div>
+      </div>
+      <div class="fg-grid">
+        <div class="fg-group"><label class="fl">Role / Permissions</label>
+          <select class="fi" id="eo-newrole">
+            <option value="investigator">Investigator — Standard access</option>
+            <option value="supervisor">Supervisor — Full access</option>
+          </select>
+        </div>
+      </div>
+      <div class="action-row" style="border-top:none;padding-top:0;margin-top:6px">
+        <button class="btn-gold" onclick="saveEditOfficer()">Save Changes</button>
+        <button class="btn-ghost" onclick="closeOverlay('edit-officer-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
