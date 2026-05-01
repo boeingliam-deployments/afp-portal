@@ -351,7 +351,7 @@ textarea.fi{resize:vertical;min-height:75px;line-height:1.5}
           <div class="fg-group"><label class="fl">Role</label>
             <select class="fi" id="adm-role">
               <option value="investigator">Investigator</option>
-              <option value="supervisor">Supervisor Command</option>
+              <option value="supervisor">Command</option>
               <option value="division" id="adm-role-div" style="display:none">Division Command</option>
             </select>
           </div>
@@ -506,7 +506,7 @@ textarea.fi{resize:vertical;min-height:75px;line-height:1.5}
         <div class="fg-group"><label class="fl">Role / Permissions</label>
           <select class="fi" id="eo-newrole">
             <option value="investigator">Investigator</option>
-            <option value="supervisor">Supervisor Command</option>
+            <option value="supervisor">Command</option>
             <option value="division" id="eo-div-opt" style="display:none">Division Command</option>
           </select>
         </div>
@@ -550,8 +550,8 @@ const auth = JSON.parse(authRaw || '{}');
 const isDivision   = auth.role === 'division';
 const isSupervisor = auth.role === 'supervisor' || isDivision;
 
-const ROLE_LABELS = { investigator:'INVESTIGATOR', supervisor:'SUPERVISOR COMMAND', division:'DIVISION COMMAND' };
-const ROLE_LABEL_FULL = { investigator:'Investigator', supervisor:'Supervisor Command', division:'Division Command' };
+const ROLE_LABELS = { investigator:'INVESTIGATOR', supervisor:'COMMAND', division:'DIVISION COMMAND' };
+const ROLE_LABEL_FULL = { investigator:'Investigator', supervisor:'Command', division:'Division Command' };
 const ROLE_PILL   = { division:'pill-division', supervisor:'pill-supervisor', investigator:'pill-investigator' };
 
 document.getElementById('rb-name').textContent = auth.displayName || auth.id || '—';
