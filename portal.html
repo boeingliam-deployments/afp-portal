@@ -219,15 +219,21 @@ textarea.fi{resize:vertical;min-height:75px;line-height:1.5}
 .toast.show{opacity:1}
 
 /* EVIDENCE */
-.evidence-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:14px}
+.evidence-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px}
 .evidence-card{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:12px;position:relative;transition:border-color 0.15s}
 .evidence-card:hover{border-color:var(--gold-border)}
 .evidence-icon{font-size:28px;margin-bottom:8px;display:block;text-align:center}
 .evidence-name{font-size:12px;font-weight:600;color:var(--white);text-align:center;margin-bottom:3px;word-break:break-word}
-.evidence-meta{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);text-align:center}
+.evidence-meta{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);text-align:center;line-height:1.5}
 .evidence-del{position:absolute;top:6px;right:6px;background:none;border:none;color:rgba(217,64,64,0.4);cursor:pointer;font-size:13px;transition:color 0.15s;padding:0}
 .evidence-del:hover{color:var(--red)}
-.ev-type-img{color:#7aa3e8}.ev-type-doc{color:var(--amber)}.ev-type-vid{color:#f08080}.ev-type-txt{color:var(--green)}
+.evidence-img{width:100%;height:100px;object-fit:cover;border-radius:3px;margin-bottom:6px;cursor:pointer}
+.evidence-img-ph{width:100%;height:100px;background:var(--surface3);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:6px}
+.witness-badge{background:rgba(45,184,122,0.12);border:1px solid rgba(45,184,122,0.3);border-radius:2px;padding:2px 7px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--green);margin-top:4px;display:inline-block}
+.ev-upload-label{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px dashed rgba(200,168,75,0.3);border-radius:3px;padding:9px 12px;cursor:pointer;transition:all 0.15s;font-size:12px;color:var(--muted);font-family:'IBM Plex Mono',monospace}
+.ev-upload-label:hover{border-color:var(--gold);color:var(--white)}
+.ev-upload-label input{display:none}
+#ev-witness-row{display:none}
 .admin-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:1px;background:linear-gradient(135deg,rgba(200,168,75,0.2),rgba(200,168,75,0.05));border:1px solid var(--gold);color:var(--gold)}
 .div-badge{background:linear-gradient(135deg,rgba(200,168,75,0.15),rgba(0,31,94,0.3));border:1px solid var(--gold-border);color:var(--gold-light,#e2c472)}
 </style>
@@ -446,23 +452,41 @@ textarea.fi{resize:vertical;min-height:75px;line-height:1.5}
       <div class="tab-c" id="t-evidence">
         <div class="evidence-grid" id="evidence-grid"></div>
         <div style="border-top:1px solid var(--border);padding-top:13px">
-          <div class="fl" style="margin-bottom:8px">Add Evidence</div>
+          <div class="fl" style="margin-bottom:10px">Add Evidence</div>
           <div class="fg-grid">
             <div class="fg-group"><label class="fl">Type</label>
-              <select class="fi" id="ev-type">
-                <option value="screenshot">📸 Screenshot</option>
-                <option value="document">📄 Document</option>
+              <select class="fi" id="ev-type" onchange="evTypeChanged()">
+                <option value="photo">📷 Photo</option>
                 <option value="video">🎥 Video</option>
-                <option value="chat">💬 Chat Log</option>
-                <option value="link">🔗 Link</option>
-                <option value="other">📎 Other</option>
+                <option value="witness">👤 Witness</option>
               </select>
             </div>
-            <div class="fg-group"><label class="fl">Title</label><input class="fi" type="text" id="ev-title" placeholder="Evidence title"/></div>
+            <div class="fg-group"><label class="fl">Title / Description</label><input class="fi" type="text" id="ev-title" placeholder="Brief description"/></div>
           </div>
-          <div class="fg-group" style="margin-bottom:10px"><label class="fl">URL / Link (optional)</label><input class="fi" type="text" id="ev-url" placeholder="https://..."/></div>
-          <div class="fg-group" style="margin-bottom:10px"><label class="fl">Notes</label><textarea class="fi" id="ev-notes" rows="2" placeholder="Evidence notes..."></textarea></div>
+          <!-- Witness username field -->
+          <div class="fg-group" id="ev-witness-row" style="margin-bottom:10px;display:none">
+            <label class="fl">Witness Roblox Username</label>
+            <input class="fi" type="text" id="ev-witness" placeholder="Roblox username of witness"/>
+          </div>
+          <!-- File upload -->
+          <div class="fg-group" style="margin-bottom:10px">
+            <label class="fl">Upload File (Photo / Video)</label>
+            <label class="ev-upload-label">
+              📎 <span id="ev-upload-name">Click to select file...</span>
+              <input type="file" id="ev-file" accept="image/*,video/*" onchange="evFileSelected(this)"/>
+            </label>
+          </div>
+          <!-- Link -->
+          <div class="fg-group" style="margin-bottom:10px">
+            <label class="fl">Link / URL (optional)</label>
+            <input class="fi" type="text" id="ev-url" placeholder="https://..."/>
+          </div>
+          <div class="fg-group" style="margin-bottom:10px">
+            <label class="fl">Notes</label>
+            <textarea class="fi" id="ev-notes" rows="2" placeholder="Additional notes..."></textarea>
+          </div>
           <button class="btn-gold" onclick="addEvidence()">+ Add Evidence</button>
+          <p style="font-size:10px;color:var(--muted2);font-family:'IBM Plex Mono',monospace;margin-top:8px;line-height:1.5">Files are stored as base64 in Firebase. Keep files under 500KB for best performance.</p>
         </div>
       </div>
       <div class="tab-c" id="t-admin">
@@ -1243,50 +1267,109 @@ window.saveEditOfficer = async () => {
 
 
 // ── EVIDENCE ────────────────────────────────────────────────
+// ── EVIDENCE TYPE TOGGLE ────────────────────────────────────
+window.evTypeChanged = () => {
+  const type = document.getElementById('ev-type').value;
+  document.getElementById('ev-witness-row').style.display = type === 'witness' ? 'block' : 'none';
+};
+
+// ── FILE SELECTED ────────────────────────────────────────────
+window.evFileSelected = (input) => {
+  const file = input.files[0];
+  if (!file) return;
+  const label = document.getElementById('ev-upload-name');
+  const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+  label.textContent = `${file.name} (${sizeMB}MB)`;
+  if (file.size > 700 * 1024) {
+    toast('Warning: File over 700KB may be slow to save');
+  }
+};
+
 function renderEvidencePanel(rec) {
   const grid = document.getElementById('evidence-grid');
   const evs  = rec.evidence ? Object.entries(rec.evidence).sort((a,b)=>a[0].localeCompare(b[0])) : [];
-  const typeIcon = { screenshot:'📸', document:'📄', video:'🎥', chat:'💬', link:'🔗', other:'📎' };
+  const typeIcon = { photo:'📷', video:'🎥', witness:'👤' };
+  const typeLabel = { photo:'Photo', video:'Video', witness:'Witness' };
   if (!evs.length) {
     grid.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:14px 0">No evidence attached.</div>';
     return;
   }
   grid.innerHTML = evs.map(([k,ev])=>`<div class="evidence-card">
     ${isSupervisor||isAdmin?`<button class="evidence-del" onclick="deleteEvidence('${k}')">✕</button>`:''}
-    <span class="evidence-icon">${typeIcon[ev.type]||'📎'}</span>
+    ${ev.fileData && ev.type==='photo'
+      ? `<img class="evidence-img" src="${ev.fileData}" alt="${ev.title}" onclick="window.open('${ev.fileData}','_blank')"/>`
+      : ev.fileData && ev.type==='video'
+      ? `<div class="evidence-img-ph" style="cursor:pointer" onclick="openVideoModal('${k}')">▶️</div>`
+      : `<span class="evidence-icon">${typeIcon[ev.type]||'📎'}</span>`}
     <div class="evidence-name">${ev.title||'Untitled'}</div>
-    <div class="evidence-meta">${ev.type||'other'}<br>${ev.addedBy||'—'} · ${ev.date||'—'}</div>
+    <div class="evidence-meta">${typeLabel[ev.type]||ev.type}<br>${ev.addedBy||'—'} · ${ev.date||'—'}</div>
+    ${ev.type==='witness' && ev.witnessUser
+      ? `<div style="text-align:center;margin-top:5px"><span class="witness-badge">👤 ${ev.witnessUser}</span></div>`
+      : ''}
     ${ev.url?`<div style="text-align:center;margin-top:6px"><a href="${ev.url}" target="_blank" style="font-size:10px;color:var(--gold);font-family:'IBM Plex Mono',monospace;text-decoration:none">Open link ↗</a></div>`:''}
     ${ev.notes?`<div style="font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4">${ev.notes}</div>`:''}
   </div>`).join('');
 }
 
+window.openVideoModal = (evKey) => {
+  const rec = (detailType==='case' ? cases : profiles).find(r=>(r._key||r.id||r.uid)===detailKey);
+  if (!rec || !rec.evidence || !rec.evidence[evKey]) return;
+  const ev = rec.evidence[evKey];
+  const win = window.open('', '_blank');
+  win.document.write(`<html><body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;height:100vh">
+    <video controls autoplay style="max-width:100%;max-height:100vh"><source src="${ev.fileData}"/></video>
+  </body></html>`);
+};
+
 window.addEvidence = async () => {
-  const title = document.getElementById('ev-title').value.trim();
-  if (!title) { toast('Evidence title required'); return; }
+  const title   = document.getElementById('ev-title').value.trim();
+  const type    = document.getElementById('ev-type').value;
+  if (!title) { toast('Title/description required'); return; }
+
   const ev = {
-    type:    document.getElementById('ev-type').value,
+    type,
     title,
-    url:     document.getElementById('ev-url').value.trim()||'',
-    notes:   document.getElementById('ev-notes').value.trim()||'',
-    addedBy: auth.id||'Unknown',
-    date:    new Date().toLocaleDateString('en-AU')
+    url:         document.getElementById('ev-url').value.trim()||'',
+    notes:       document.getElementById('ev-notes').value.trim()||'',
+    witnessUser: type==='witness' ? (document.getElementById('ev-witness').value.trim()||'') : '',
+    addedBy:     auth.id||'Unknown',
+    date:        new Date().toLocaleDateString('en-AU'),
+    fileData:    ''
   };
+
+  // Handle file upload — convert to base64
+  const fileInput = document.getElementById('ev-file');
+  if (fileInput.files[0]) {
+    const file = fileInput.files[0];
+    toast('Uploading file...');
+    ev.fileData = await new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = e => res(e.target.result);
+      reader.onerror = rej;
+      reader.readAsDataURL(file);
+    });
+  }
+
   const base = detailType==='case' ? `cases/${detailKey}/evidence` : `profiles/${detailKey}/evidence`;
   await push(ref(db,base), ev);
-  document.getElementById('ev-title').value='';
-  document.getElementById('ev-url').value='';
-  document.getElementById('ev-notes').value='';
-  // re-render
-  const recArr = detailType==='case' ? cases : profiles;
-  const rec    = recArr.find(r=>(r._key||r.id||r.uid)===detailKey);
-  if (rec) renderEvidencePanel(rec);
-  logAction('Evidence added', `${detailKey}: ${title}`, { recordId:detailKey, evidenceTitle:title, evidenceType:ev.type });
+
+  // Reset form
+  document.getElementById('ev-title').value   = '';
+  document.getElementById('ev-url').value     = '';
+  document.getElementById('ev-notes').value   = '';
+  document.getElementById('ev-witness').value = '';
+  document.getElementById('ev-file').value    = '';
+  document.getElementById('ev-upload-name').textContent = 'Click to select file...';
+  document.getElementById('ev-witness-row').style.display = 'none';
+  document.getElementById('ev-type').value = 'photo';
+
+  logAction('Evidence added', `${detailKey}: ${title}`, { recordId:detailKey, evidenceTitle:title, evidenceType:type });
   toast('Evidence added');
 };
 
 window.deleteEvidence = async (evKey) => {
   if (!isSupervisor && !isAdmin) return;
+  if (!confirm('Delete this evidence? Cannot be undone.')) return;
   const base = detailType==='case' ? `cases/${detailKey}/evidence/${evKey}` : `profiles/${detailKey}/evidence/${evKey}`;
   await remove(ref(db,base));
   logAction('Evidence deleted', detailKey, {});
