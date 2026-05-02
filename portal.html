@@ -1210,7 +1210,7 @@ window.openEditOfficer = async (role,key) => {
   document.getElementById('eo-pass').value     = '';
   document.getElementById('eo-newrole').value  = role;
   document.getElementById('eo-id-display').textContent = key.replace(/_/g,'-');
-  document.getElementById('eo-div-opt').style.display = isDivision?'':'none';
+  document.getElementById('eo-div-opt').style.display = (isDivision || isAdmin) ? '' : 'none';
   openModal('edit-officer-modal');
 };
 
