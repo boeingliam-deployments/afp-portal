@@ -603,7 +603,7 @@ if (isSupervisor) {
   document.getElementById('nav-admin').style.display = 'flex';
   document.getElementById('tab-sup-btn').style.display = 'block';
 }
-if (isDivision) {
+if (isDivision || isAdmin) {
   document.getElementById('adm-role-div').style.display = '';
 }
 if (!CONFIGURED) document.getElementById('config-banner').style.display = 'block';
@@ -1131,7 +1131,7 @@ window.adminAddOfficer = async () => {
   const name = document.getElementById('adm-name').value.trim();
   const role = document.getElementById('adm-role').value;
   if (!id||!pass) { toast('ID and passphrase required'); return; }
-  if (role==='division' && !isDivision) { toast('Only Division Command can create Division Command accounts'); return; }
+  if (role==='division' && !isDivision && !isAdmin) { toast('Only Division Command or Admin can create Division Command accounts'); return; }
   const safeId = id.replace(/[.#$[\]]/g,'_');
   await set(ref(db,`officers/${role}/${safeId}`), { pass, displayName:name||id, rank:role, suspended:false });
   logAction('Officer added', `${id} as ${role}`, { badgeId:id, newRole:role, displayName:name||id });
@@ -1224,7 +1224,7 @@ window.saveEditOfficer = async () => {
   const newBadge = document.getElementById('eo-badgeid').value.trim();
   const newKey   = newBadge ? newBadge.replace(/[.#$[\]]/g,'_') : oldKey;
   if (oldRole==='division' && !isDivision) { toast('Insufficient clearance'); return; }
-  if (newRole==='division' && !isDivision) { toast('Cannot assign Division Command role'); return; }
+  if (newRole==='division' && !isDivision && !isAdmin) { toast('Cannot assign Division Command role'); return; }
   const snap = await get(ref(db,`officers/${oldRole}/${oldKey}`));
   const existing = snap.val()||{};
   const updated  = { ...existing, displayName:name, rank:newRole };
