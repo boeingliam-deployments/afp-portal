@@ -23,8 +23,8 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--whi
 /* SIDEBAR */
 .sidebar{width:215px;min-width:215px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
 .sidebar-logo{padding:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
-.crest{width:32px;height:32px;background:var(--navy);border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.crest span{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;color:var(--gold);letter-spacing:0.5px}
+.crest{width:34px;height:34px;background:#fff;border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;padding:1px}
+
 .sidebar-title{font-size:12px;font-weight:600;color:var(--white);line-height:1.2}
 .sidebar-title small{display:block;font-size:10px;color:var(--muted);font-weight:400;font-family:'IBM Plex Mono',monospace;margin-top:1px}
 .role-badge{margin:10px 12px;padding:7px 10px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--gold)}
@@ -87,6 +87,1247 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--whi
 .rblx-display{font-size:12px;color:var(--muted);margin-bottom:6px}
 .rblx-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
 .rblx-meta-item{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted)}
+.rblx-desc{font-size:12px;color:var(--muted);line-height:1.5;max-height:44px;overflow:hidden;margin-bottom:8px}
+.rblx-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.rblx-banned{color:var(--red);background:var(--red-dim);border:1px solid var(--red-border);border-radius:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 8px;display:inline-block;margin-bottom:5px}
+.alert-banner{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:3px;font-size:11px;font-family:'IBM Plex Mono',monospace;font-weight:600;margin-bottom:8px;letter-spacing:0.5px}
+.alert-banner.red{background:rgba(217,64,64,0.15);border:1px solid var(--red-border);color:#f08080}
+.alert-banner.amber{background:var(--amber-dim);border:1px solid var(--amber-border);color:var(--amber)}
+.linked-case-card{background:var(--surface3);border:1px solid var(--gold-border);border-radius:3px;padding:8px 11px;margin-top:5px;cursor:pointer;transition:all 0.15s}
+.linked-case-card:hover{background:rgba(200,168,75,0.1)}
+.linked-case-title{font-size:12px;font-weight:600;color:var(--white)}
+.linked-case-meta{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:2px}
+
+/* RESULT CARDS */
+.result-card{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all 0.15s}
+.result-card:hover{border-color:var(--gold-border);background:var(--surface3)}
+.rc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.rc-title{font-size:13px;font-weight:600;color:var(--white)}
+.rc-sub{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-top:2px}
+
+/* PILLS */
+.pill{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:3px 8px;border-radius:2px;font-weight:500;letter-spacing:0.5px}
+.pill-open{background:var(--blue-dim);color:#7aa3e8;border:1px solid var(--blue-border)}
+.pill-closed{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.pill-urgent{background:var(--red-dim);color:#f08080;border:1px solid var(--red-border)}
+.pill-pending{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.pill-flagged{background:var(--red-dim);color:#f08080;border:1px solid var(--red-border)}
+.pill-cleared{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.pill-monitored{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.pill-banned{background:rgba(217,64,64,0.25);color:#f08080;border:1px solid rgba(217,64,64,0.5)}
+.pill-high{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.pill-normal{background:var(--blue-dim);color:#7aa3e8;border:1px solid var(--blue-border)}
+.pill-division{background:rgba(200,168,75,0.2);color:var(--gold);border:1px solid var(--gold-border)}
+.pill-supervisor{background:var(--red-dim);color:#f08080;border:1px solid var(--red-border)}
+.pill-investigator{background:var(--blue-dim);color:#7aa3e8;border:1px solid var(--blue-border)}
+
+/* TABLES */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:8px 13px;font-size:9px;font-family:'IBM Plex Mono',monospace;font-weight:500;color:var(--muted);background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:1px;text-align:left;white-space:nowrap}
+td{padding:10px 13px;border-bottom:1px solid var(--border);color:var(--white)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02);cursor:pointer}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
+
+/* DETAIL OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(6,13,30,0.75);z-index:100;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.dp{background:var(--surface);border:1px solid var(--gold-border);border-radius:4px;width:700px;max-width:96vw;max-height:90vh;overflow-y:auto;position:relative}
+.dp::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--navy),var(--gold),var(--navy))}
+.dp-header{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
+.dp-header h3{font-size:15px;font-weight:600;color:var(--white)}
+.dp-header p{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-top:3px}
+.close-btn{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:0;transition:color 0.15s}
+.close-btn:hover{color:var(--white)}
+.dp-body{padding:18px}
+.dp-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab-btn{padding:7px 13px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;letter-spacing:0.5px}
+.tab-btn:hover{color:var(--white)}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-c{display:none}.tab-c.active{display:block}
+
+/* FIELDS */
+.fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px}
+.fg-group{display:flex;flex-direction:column;gap:5px}
+.fg-group.full{grid-column:1/-1}
+.fl{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.fi{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:8px 11px;font-size:13px;color:var(--white);font-family:'IBM Plex Sans',sans-serif;outline:none;transition:border-color 0.15s;width:100%}
+.fi:focus{border-color:var(--gold)}
+.fi::placeholder{color:var(--muted2)}
+select.fi option{background:var(--surface2)}
+textarea.fi{resize:vertical;min-height:75px;line-height:1.5}
+
+/* NOTES */
+.notes-list{display:flex;flex-direction:column;gap:9px;margin-bottom:13px}
+.note-item{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:3px;padding:11px 13px}
+.note-meta{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between}
+.note-body{font-size:13px;color:var(--white);line-height:1.5}
+.note-del{background:none;border:none;color:rgba(217,64,64,0.4);cursor:pointer;font-size:13px;transition:color 0.15s;padding:0}
+.note-del:hover{color:var(--red)}
+
+/* ACTION ROW */
+.action-row{display:flex;gap:7px;margin-top:13px;padding-top:13px;border-top:1px solid var(--border)}
+
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(6,13,30,0.8);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--gold-border);border-radius:4px;width:520px;max-width:96vw;max-height:90vh;overflow-y:auto}
+.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-header h3{font-size:14px;font-weight:600;color:var(--white)}
+.modal-body{padding:18px}
+
+/* RIGHT PANEL */
+.rp{width:250px;min-width:250px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.rp-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.rp-tab{flex:1;padding:9px 6px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);cursor:pointer;text-align:center;border-bottom:2px solid transparent;transition:all 0.15s;letter-spacing:1px}
+.rp-tab:hover{color:var(--white)}.rp-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.rp-body{flex:1;overflow-y:auto;padding:13px}
+.notepad-area{width:100%;min-height:280px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:10px;font-size:12px;color:var(--white);font-family:'IBM Plex Mono',monospace;resize:none;outline:none;line-height:1.7;transition:border-color 0.15s}
+.notepad-area:focus{border-color:var(--gold)}
+.notepad-hint{font-size:10px;color:var(--muted2);font-family:'IBM Plex Mono',monospace;margin-top:7px;line-height:1.5}
+.qrf-sec{margin-bottom:14px}
+.qrf-sec-title{font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--muted2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.qrf-link{display:flex;align-items:flex-start;gap:8px;padding:7px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;margin-bottom:5px;cursor:pointer;transition:all 0.15s;text-decoration:none}
+.qrf-link:hover{border-color:var(--gold-border);background:var(--surface3)}
+.qrf-link-ico{font-size:13px;flex-shrink:0;margin-top:1px}
+.qrf-link-name{font-size:11px;color:var(--white);font-weight:500;line-height:1.3}
+.qrf-link-desc{font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-top:1px}
+
+/* OFFICER ROWS */
+.officer-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;margin-bottom:7px;gap:10px;flex-wrap:wrap}
+.officer-id{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--white)}
+.officer-meta{font-size:11px;color:var(--muted);margin-top:3px;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.officer-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+
+/* FILTER ROW */
+.filter-row{display:flex;gap:8px;margin-bottom:12px}
+.filter-row .fi{flex:1}
+
+/* MISC */
+.config-banner{background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;padding:9px 13px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:#f08080;margin-bottom:14px;display:none;line-height:1.6}
+.empty{text-align:center;padding:22px;color:var(--muted);font-size:12px;font-family:'IBM Plex Mono',monospace;line-height:1.7}
+.empty .big{font-size:26px;margin-bottom:8px;opacity:0.4}
+.search-loading{text-align:center;padding:16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+.log-item{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.log-item:last-child{border-bottom:none}
+.log-time{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);min-width:46px;margin-top:2px}
+.log-text{color:var(--white);line-height:1.4}
+.log-text span{color:var(--gold)}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--surface);border:1px solid var(--gold-border);border-radius:3px;padding:10px 15px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--gold);z-index:999;opacity:0;pointer-events:none;transition:opacity 0.3s;max-width:260px}
+.toast.show{opacity:1}
+
+/* EVIDENCE */
+.evidence-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:14px}
+.evidence-card{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:12px;position:relative;transition:border-color 0.15s}
+.evidence-card:hover{border-color:var(--gold-border)}
+.evidence-icon{font-size:28px;margin-bottom:8px;display:block;text-align:center}
+.evidence-name{font-size:12px;font-weight:600;color:var(--white);text-align:center;margin-bottom:3px;word-break:break-word}
+.evidence-meta{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);text-align:center}
+.evidence-del{position:absolute;top:6px;right:6px;background:none;border:none;color:rgba(217,64,64,0.4);cursor:pointer;font-size:13px;transition:color 0.15s;padding:0}
+.evidence-del:hover{color:var(--red)}
+.ev-type-img{color:#7aa3e8}.ev-type-doc{color:var(--amber)}.ev-type-vid{color:#f08080}.ev-type-txt{color:var(--green)}
+.admin-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:1px;background:linear-gradient(135deg,rgba(200,168,75,0.2),rgba(200,168,75,0.05));border:1px solid var(--gold);color:var(--gold)}
+.div-badge{background:linear-gradient(135deg,rgba(200,168,75,0.15),rgba(0,31,94,0.3));border:1px solid var(--gold-border);color:var(--gold-light,#e2c472)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="crest"><img src="data:image/jpeg;base64,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" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>
+    <div class="sidebar-title">AFP Portal<small>Investigator System</small></div>
+  </div>
+  <div class="role-badge"><strong id="rb-name">—</strong><span id="rb-role">—</span></div>
+  <div class="nav-sec">Investigation</div>
+  <div class="nav-item active" data-view="home">
+    <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="4"/><path d="M10 10l3 3"/></svg>Search
+  </div>
+  <div class="nav-item" data-view="cases">
+    <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M5 3V2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/></svg>Cases
+  </div>
+  <div class="nav-item" data-view="profiles">
+    <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5.5" r="2.5"/><path d="M3 13c0-2.76 2.24-5 5-5s5 2.24 5 5"/></svg>Roblox Profiles
+  </div>
+  <div class="nav-sec">System</div>
+  <div class="nav-item" data-view="log">
+    <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg>Activity Log
+  </div>
+  <div class="nav-item" data-view="admin" id="nav-admin" style="display:none">
+    <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l1.5 3L13 5.5l-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5 6.5 5z"/></svg>Admin
+  </div>
+  <div class="sidebar-footer">
+    <div class="logout-btn" onclick="logout()">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M11 11l3-3-3-3M14 8H6"/></svg>Sign out
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-l"><h2 id="view-title">Search</h2><p id="view-sub">Search Roblox profiles and case records</p></div>
+    <div class="topbar-r">
+      <button class="btn-ghost" onclick="openModal('add-profile-modal')">+ Add Profile</button>
+      <button class="btn-gold" onclick="openModal('add-case-modal')">+ New Case</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- HOME -->
+    <div class="view active" id="view-home">
+      <div class="config-banner" id="config-banner">⚠ Firebase not configured — data will not persist. Edit firebaseConfig in both files.</div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Cases</div><div class="stat-val" id="s-cases">—</div><div class="stat-sub">all records</div></div>
+        <div class="stat-card"><div class="stat-label">Open / Urgent</div><div class="stat-val" id="s-open">—</div><div class="stat-sub">active</div></div>
+        <div class="stat-card"><div class="stat-label">Profiles</div><div class="stat-val" id="s-profiles">—</div><div class="stat-sub">tracked</div></div>
+        <div class="stat-card"><div class="stat-label">Flagged</div><div class="stat-val" id="s-flagged">—</div><div class="stat-sub">needs review</div></div>
+      </div>
+
+      <!-- Subject self-check -->
+      <div class="pub-panel">
+        <div class="sp-title">🔎 Subject Record Check — Enter Roblox Username</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6">Check if a person has an AFP record. Can be shown to persons of interest.</p>
+        <div class="search-row">
+          <input class="fi" type="text" id="pub-input" placeholder="Enter Roblox username..."/>
+          <button class="btn-gold" onclick="publicRecordCheck()">Check Record</button>
+        </div>
+        <div id="pub-results"></div>
+      </div>
+
+      <div class="search-grid">
+        <div class="search-panel">
+          <div class="sp-title">🎮 Roblox Investigator Lookup</div>
+          <div class="search-row">
+            <input class="fi" type="text" id="rblx-input" placeholder="Username or UID..."/>
+            <button class="btn-gold" onclick="lookupRoblox()">Search</button>
+          </div>
+          <div class="search-results" id="rblx-results">
+            <div class="empty"><div class="big">🎮</div>Enter a username or UID to look up</div>
+          </div>
+        </div>
+        <div class="search-panel">
+          <div class="sp-title">📁 Case Search</div>
+          <div class="search-row">
+            <input class="fi" type="text" id="case-search-input" placeholder="Case ID, title, username..." oninput="searchCases(this.value)"/>
+          </div>
+          <div class="search-results" id="case-results">
+            <div class="empty"><div class="big">📁</div>Enter keywords to find cases</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CASES -->
+    <div class="view" id="view-cases">
+      <div class="filter-row">
+        <input class="fi" type="text" placeholder="Search cases..." oninput="renderCasesTable(this.value)"/>
+        <select class="fi" id="case-sf" onchange="renderCasesTable()" style="flex:0 0 130px">
+          <option value="">All Status</option><option>Open</option><option>Pending</option><option>Urgent</option><option>Closed</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <table><thead><tr><th>Case ID</th><th>Title</th><th>Suspect</th><th>UID</th><th>Priority</th><th>Assigned</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody id="cases-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- PROFILES -->
+    <div class="view" id="view-profiles">
+      <div class="filter-row">
+        <input class="fi" type="text" placeholder="Search username or UID..." oninput="renderProfilesTable(this.value)"/>
+      </div>
+      <div class="table-card">
+        <table><thead><tr><th>Username</th><th>Roblox UID</th><th>Status</th><th>Linked Case</th><th>Added By</th><th>Date</th></tr></thead>
+        <tbody id="profiles-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="view" id="view-log">
+      <div class="table-card" style="padding:14px"><div id="log-list"></div></div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="view" id="view-admin">
+      <div class="search-panel" style="margin-bottom:16px">
+        <div class="sp-title">➕ Add New Officer</div>
+        <div class="fg-grid">
+          <div class="fg-group"><label class="fl">Badge ID</label><input class="fi" type="text" id="adm-id" placeholder="DET-XXXX"/></div>
+          <div class="fg-group"><label class="fl">Passphrase</label><input class="fi" type="text" id="adm-pass" placeholder="passphrase"/></div>
+        </div>
+        <div class="fg-grid">
+          <div class="fg-group"><label class="fl">Display Name</label><input class="fi" type="text" id="adm-name" placeholder="Det. Smith"/></div>
+          <div class="fg-group"><label class="fl">Role</label>
+            <select class="fi" id="adm-role">
+              <option value="investigator">Investigator</option>
+              <option value="supervisor">Command</option>
+              <option value="division" id="adm-role-div" style="display:none">Division Command</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-gold" onclick="adminAddOfficer()">Save to Firebase</button>
+      </div>
+      <div class="search-panel">
+        <div class="sp-title" style="display:flex;align-items:center;justify-content:space-between">
+          <span>👮 Officer Accounts</span>
+          <button class="btn-ghost" style="font-size:10px;padding:4px 10px" onclick="loadOfficers()">↻ Refresh</button>
+        </div>
+        <div id="officer-list" style="margin-top:12px"><div class="empty">Click Refresh to load officers.</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="rp">
+  <div class="rp-tabs">
+    <div class="rp-tab active" onclick="switchRp('notepad',this)">NOTEPAD</div>
+    <div class="rp-tab" onclick="switchRp('qrf',this)">QRF</div>
+  </div>
+  <div class="rp-body">
+    <div id="rp-notepad">
+      <textarea class="notepad-area" id="notepad-text" placeholder="Quick notes...&#10;&#10;Auto-saved. Private to this browser." oninput="localStorage.setItem('afp_notepad',this.value)"></textarea>
+      <div class="notepad-hint">Auto-saved locally. Not synced.</div>
+    </div>
+    <div id="rp-qrf" style="display:none">
+      <div class="qrf-sec">
+        <div class="qrf-sec-title">Legislation</div>
+        <a class="qrf-link" href="https://www.legislation.gov.au/Series/C1914A00012" target="_blank"><span class="qrf-link-ico">⚖️</span><div><div class="qrf-link-name">Crimes Act 1914</div><div class="qrf-link-desc">C1914A00012</div></div></a>
+        <a class="qrf-link" href="https://www.legislation.gov.au/Series/C2004A00593" target="_blank"><span class="qrf-link-ico">⚖️</span><div><div class="qrf-link-name">Criminal Code Act 1995</div><div class="qrf-link-desc">Schedule 1</div></div></a>
+        <a class="qrf-link" href="https://www.legislation.gov.au/Series/C2004A04145" target="_blank"><span class="qrf-link-ico">⚖️</span><div><div class="qrf-link-name">AFP Act 1979</div><div class="qrf-link-desc">Powers &amp; structure</div></div></a>
+        <a class="qrf-link" href="https://www.legislation.gov.au/Series/C2004A03031" target="_blank"><span class="qrf-link-ico">⚖️</span><div><div class="qrf-link-name">Proceeds of Crime Act 2002</div><div class="qrf-link-desc">Asset forfeiture</div></div></a>
+        <a class="qrf-link" href="https://www.legislation.gov.au/Series/C2004A01234" target="_blank"><span class="qrf-link-ico">⚖️</span><div><div class="qrf-link-name">Telecommunications Interception Act</div><div class="qrf-link-desc">Lawful intercept</div></div></a>
+      </div>
+      <div class="qrf-sec">
+        <div class="qrf-sec-title">Cyber / Online</div>
+        <a class="qrf-link" href="https://www.cyber.gov.au" target="_blank"><span class="qrf-link-ico">🛡️</span><div><div class="qrf-link-name">ACSC</div><div class="qrf-link-desc">cyber.gov.au</div></div></a>
+        <a class="qrf-link" href="https://www.afp.gov.au/what-we-do/crime-types/cybercrime" target="_blank"><span class="qrf-link-ico">🔍</span><div><div class="qrf-link-name">AFP Cybercrime</div><div class="qrf-link-desc">afp.gov.au</div></div></a>
+        <a class="qrf-link" href="https://www.esafety.gov.au" target="_blank"><span class="qrf-link-ico">🔒</span><div><div class="qrf-link-name">eSafety Commissioner</div><div class="qrf-link-desc">esafety.gov.au</div></div></a>
+        <a class="qrf-link" href="https://www.austrac.gov.au" target="_blank"><span class="qrf-link-ico">💰</span><div><div class="qrf-link-name">AUSTRAC</div><div class="qrf-link-desc">Financial intelligence</div></div></a>
+      </div>
+      <div class="qrf-sec">
+        <div class="qrf-sec-title">Roblox</div>
+        <a class="qrf-link" href="https://www.roblox.com/users/search?keyword=" target="_blank"><span class="qrf-link-ico">🎮</span><div><div class="qrf-link-name">Roblox User Search</div><div class="qrf-link-desc">roblox.com</div></div></a>
+        <a class="qrf-link" href="https://www.roblox.com/report-abuse" target="_blank"><span class="qrf-link-ico">🚨</span><div><div class="qrf-link-name">Roblox Report Abuse</div><div class="qrf-link-desc">Official report page</div></div></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL OVERLAY -->
+<div class="overlay" id="detail-overlay" onclick="overlayClick(event,'detail-overlay')">
+  <div class="dp">
+    <div class="dp-header">
+      <div><h3 id="dp-title">—</h3><p id="dp-sub">—</p></div>
+      <button class="close-btn" onclick="closeOverlay('detail-overlay')">×</button>
+    </div>
+    <div class="dp-body">
+      <div class="dp-tabs">
+        <div class="tab-btn active" onclick="switchTab(this,'t-overview')">Overview</div>
+        <div class="tab-btn" onclick="switchTab(this,'t-notes')">Notes</div>
+        <div class="tab-btn" onclick="switchTab(this,'t-edit')">Edit</div>
+        <div class="tab-btn" onclick="switchTab(this,'t-evidence')">Evidence</div>
+        <div class="tab-btn" id="tab-sup-btn" style="display:none" onclick="switchTab(this,'t-admin')">Admin</div>
+      </div>
+      <div class="tab-c active" id="t-overview"><div id="overview-content"></div></div>
+      <div class="tab-c" id="t-notes">
+        <div class="notes-list" id="notes-list"></div>
+        <div class="fg-group"><label class="fl">Add note</label><textarea class="fi" id="new-note" rows="3" placeholder="Enter investigative note..."></textarea></div>
+        <div class="action-row"><button class="btn-gold" onclick="addNote()">Save note</button></div>
+      </div>
+      <div class="tab-c" id="t-edit"><div id="edit-content"></div>
+        <div class="action-row"><button class="btn-gold" onclick="saveEdit()">Save changes</button><button class="btn-ghost" onclick="closeOverlay('detail-overlay')">Cancel</button></div>
+      </div>
+      <div class="tab-c" id="t-evidence">
+        <div class="evidence-grid" id="evidence-grid"></div>
+        <div style="border-top:1px solid var(--border);padding-top:13px">
+          <div class="fl" style="margin-bottom:8px">Add Evidence</div>
+          <div class="fg-grid">
+            <div class="fg-group"><label class="fl">Type</label>
+              <select class="fi" id="ev-type">
+                <option value="screenshot">📸 Screenshot</option>
+                <option value="document">📄 Document</option>
+                <option value="video">🎥 Video</option>
+                <option value="chat">💬 Chat Log</option>
+                <option value="link">🔗 Link</option>
+                <option value="other">📎 Other</option>
+              </select>
+            </div>
+            <div class="fg-group"><label class="fl">Title</label><input class="fi" type="text" id="ev-title" placeholder="Evidence title"/></div>
+          </div>
+          <div class="fg-group" style="margin-bottom:10px"><label class="fl">URL / Link (optional)</label><input class="fi" type="text" id="ev-url" placeholder="https://..."/></div>
+          <div class="fg-group" style="margin-bottom:10px"><label class="fl">Notes</label><textarea class="fi" id="ev-notes" rows="2" placeholder="Evidence notes..."></textarea></div>
+          <button class="btn-gold" onclick="addEvidence()">+ Add Evidence</button>
+        </div>
+      </div>
+      <div class="tab-c" id="t-admin">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:13px">Command / Division Command controls.</p>
+        <div class="action-row" style="border-top:none;padding-top:0">
+          <button class="btn-danger" onclick="deleteRecord()">Delete record</button>
+          <button class="btn-ghost" onclick="archiveRecord()">Archive / Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PROFILE MODAL -->
+<div class="modal-overlay" id="add-profile-modal" onclick="overlayClick(event,'add-profile-modal')">
+  <div class="modal">
+    <div class="modal-header"><h3>Add Roblox Profile</h3><button class="close-btn" onclick="closeOverlay('add-profile-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="fg-grid">
+        <div class="fg-group"><label class="fl">Username</label><input class="fi" type="text" id="ap-name" placeholder="Roblox username"/></div>
+        <div class="fg-group"><label class="fl">Roblox UID</label><input class="fi" type="text" id="ap-uid" placeholder="Numeric UID"/></div>
+      </div>
+      <div class="fg-grid">
+        <div class="fg-group"><label class="fl">Status</label><select class="fi" id="ap-status"><option>Monitored</option><option>Flagged</option><option>Cleared</option><option>Banned</option></select></div>
+        <div class="fg-group"><label class="fl">Linked Case (optional)</label><input class="fi" type="text" id="ap-case" placeholder="AFP-YYYYMMDD-XXX"/></div>
+      </div>
+      <div class="fg-group" style="margin-bottom:13px"><label class="fl">Initial Notes</label><textarea class="fi" id="ap-notes" rows="3" placeholder="Profile notes..."></textarea></div>
+      <div class="action-row" style="border-top:none;padding-top:0">
+        <button class="btn-gold" onclick="submitAddProfile()">Save Profile</button>
+        <button class="btn-ghost" onclick="closeOverlay('add-profile-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CASE MODAL -->
+<div class="modal-overlay" id="add-case-modal" onclick="overlayClick(event,'add-case-modal')">
+  <div class="modal">
+    <div class="modal-header"><h3>Create New Case</h3><button class="close-btn" onclick="closeOverlay('add-case-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="fg-grid">
+        <div class="fg-group"><label class="fl">Case ID (auto if blank)</label><input class="fi" type="text" id="ac-id" placeholder="AFP-YYYYMMDD-XXX"/></div>
+        <div class="fg-group"><label class="fl">Title</label><input class="fi" type="text" id="ac-title" placeholder="Brief case title"/></div>
+      </div>
+      <div class="fg-grid">
+        <div class="fg-group"><label class="fl">Suspect Username</label><input class="fi" type="text" id="ac-user" placeholder="Roblox username"/></div>
+        <div class="fg-group"><label class="fl">Suspect UID</label><input class="fi" type="text" id="ac-uid" placeholder="Roblox UID"/></div>
+      </div>
+      <div class="fg-grid">
+        <div class="fg-group"><label class="fl">Priority</label><select class="fi" id="ac-priority"><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+        <div class="fg-group"><label class="fl">Assigned To</label><input class="fi" type="text" id="ac-assigned" placeholder="Det. Name"/></div>
+      </div>
+      <div class="fg-group" style="margin-bottom:13px"><label class="fl">Initial Notes</label><textarea class="fi" id="ac-notes" rows="3" placeholder="Initial case details..."></textarea></div>
+      <div class="action-row" style="border-top:none;padding-top:0">
+        <button class="btn-gold" onclick="submitAddCase()">Create Case</button>
+        <button class="btn-ghost" onclick="closeOverlay('add-case-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT OFFICER MODAL -->
+<div class="modal-overlay" id="edit-officer-modal" onclick="overlayClick(event,'edit-officer-modal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Edit Officer — <span id="eo-id-display" style="color:var(--gold);font-family:'IBM Plex Mono',monospace"></span></h3>
+      <button class="close-btn" onclick="closeOverlay('edit-officer-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eo-role"/><input type="hidden" id="eo-key"/>
+      <div class="fg-grid">
+        <div class="fg-group"><label class="fl">Badge ID / Username</label><input class="fi" type="text" id="eo-badgeid" placeholder="DET-XXXX"/></div>
+        <div class="fg-group"><label class="fl">Display Name</label><input class="fi" type="text" id="eo-name" placeholder="Det. Smith"/></div>
+      </div>
+      <div class="fg-grid">
+        <div class="fg-group"><label class="fl">New Passphrase <span style="color:var(--muted);font-size:10px">(blank = keep)</span></label><input class="fi" type="text" id="eo-pass" placeholder="leave blank to keep"/></div>
+        <div class="fg-group"><label class="fl">Role / Permissions</label>
+          <select class="fi" id="eo-newrole">
+            <option value="investigator">Investigator</option>
+            <option value="supervisor">Command</option>
+            <option value="division" id="eo-div-opt" style="display:none">Division Command</option>
+          </select>
+        </div>
+      </div>
+      <div class="action-row" style="border-top:none;padding-top:0;margin-top:6px">
+        <button class="btn-gold" onclick="saveEditOfficer()">Save Changes</button>
+        <button class="btn-ghost" onclick="closeOverlay('edit-officer-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, get, set, push, remove, update, onValue }
+                           from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+// ── CONFIG ────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey:            "AIzaSyCytfL6gcCqCZZjps03OOsq14ipYZhldnc",
+  authDomain:        "afp-project-39dff.firebaseapp.com",
+  databaseURL:       "https://afp-project-39dff-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "afp-project-39dff",
+  storageBucket:     "afp-project-39dff.firebasestorage.app",
+  messagingSenderId: "347541722596",
+  appId:             "1:347541722596:web:d38f0a2f7148ebccd4a3f1"
+};
+
+const WORKER_URL      = "https://afp-relay.boeingliam.workers.dev";
+const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1499997447689343086/yQwdpRJvSOxwRRBMG2-NQcxvn7RzJhNj2TLswjixdPZkO4R5N4tDNUyUp6OQMojW2dtb";
+const CONFIGURED      = true;
+const WORKER_SET      = true;
+
+// ── AUTH ─────────────────────────────────────────────────────
+const authRaw = sessionStorage.getItem('afp_auth');
+if (!authRaw) { window.location.href = 'index.html'; }
+const auth = JSON.parse(authRaw || '{}');
+
+const isDivision   = auth.role === 'division';
+const isAdmin      = auth.id === 'ADMIN' || auth.role === 'admin'; // hardcoded admin account
+const isSupervisor = auth.role === 'supervisor' || isDivision || isAdmin;
+
+const ROLE_LABELS = { investigator:'INVESTIGATOR', supervisor:'COMMAND', division:'DIVISION COMMAND', admin:'ADMIN' };
+const ROLE_LABEL_FULL = { investigator:'Investigator', supervisor:'Command', division:'Division Command', admin:'Administrator' };
+const ROLE_PILL   = { division:'pill-division', supervisor:'pill-supervisor', investigator:'pill-investigator', admin:'pill-division' };
+
+document.getElementById('rb-name').textContent = auth.displayName || auth.id || '—';
+document.getElementById('rb-role').textContent = ROLE_LABELS[auth.role] || (auth.role||'').toUpperCase();
+if (isAdmin) {
+  const badge = document.getElementById('role-badge');
+  if (badge) badge.style.borderColor = 'var(--gold)';
+  document.getElementById('rb-role').textContent = '⭐ ADMINISTRATOR';
+}
+
+if (isSupervisor) {
+  document.getElementById('nav-admin').style.display = 'flex';
+  document.getElementById('tab-sup-btn').style.display = 'block';
+}
+if (isDivision) {
+  document.getElementById('adm-role-div').style.display = '';
+}
+if (!CONFIGURED) document.getElementById('config-banner').style.display = 'block';
+
+// ── FIREBASE ─────────────────────────────────────────────────
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+let cases    = [];
+let profiles = [];
+let actLog   = [];
+
+onValue(ref(db,'cases'),    snap => { cases    = toArr(snap.val()); updateStats(); renderCasesTable(); });
+onValue(ref(db,'profiles'), snap => { profiles = toArr(snap.val()); updateStats(); renderProfilesTable(); });
+onValue(ref(db,'actlog'),   snap => { actLog   = toArr(snap.val()).sort((a,b)=>(b.ts||0)-(a.ts||0)); renderLog(); });
+
+function toArr(val) {
+  if (!val) return [];
+  return Object.entries(val).map(([k,v]) => ({...v, _key:k}));
+}
+
+// ── NOTEPAD ──────────────────────────────────────────────────
+const saved = localStorage.getItem('afp_notepad');
+if (saved) document.getElementById('notepad-text').value = saved;
+
+// ── NAV ──────────────────────────────────────────────────────
+const VIEW_META = {
+  home:     ['Search',          'Look up Roblox profiles and search cases'],
+  cases:    ['Case Management', 'All active and historical cases'],
+  profiles: ['Roblox Profiles', 'Tracked profiles and suspects'],
+  log:      ['Activity Log',    'All officer actions'],
+  admin:    ['Admin Panel',     'Officer management'],
+};
+
+document.querySelectorAll('.nav-item[data-view]').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+    const v = el.dataset.view;
+    document.querySelectorAll('.view').forEach(vw => vw.classList.remove('active'));
+    document.getElementById('view-'+v).classList.add('active');
+    const m = VIEW_META[v]||['',''];
+    document.getElementById('view-title').textContent = m[0];
+    document.getElementById('view-sub').textContent   = m[1];
+    if (v==='log') renderLog();
+  });
+});
+
+window.logout = () => { sessionStorage.removeItem('afp_auth'); window.location.href='index.html'; };
+
+// ── STATS ────────────────────────────────────────────────────
+function updateStats() {
+  document.getElementById('s-cases').textContent    = cases.length;
+  document.getElementById('s-open').textContent     = cases.filter(c=>c.status==='Open'||c.status==='Urgent').length;
+  document.getElementById('s-profiles').textContent = profiles.length;
+  document.getElementById('s-flagged').textContent  = profiles.filter(p=>p.status==='Flagged'||p.status==='Banned').length;
+}
+
+// ── PILLS ────────────────────────────────────────────────────
+function pill(val, type) {
+  const maps = {
+    status:   {open:'open',closed:'closed',urgent:'urgent',pending:'pending'},
+    priority: {normal:'normal',high:'high',urgent:'urgent'},
+    ustat:    {flagged:'flagged',cleared:'cleared',monitored:'monitored',banned:'banned'}
+  };
+  const cls = maps[type]?.[(val||'').toLowerCase()] || 'open';
+  return `<span class="pill pill-${cls}">${val||'—'}</span>`;
+}
+
+// ── PUBLIC RECORD CHECK ──────────────────────────────────────
+window.publicRecordCheck = async () => {
+  const q  = document.getElementById('pub-input').value.trim();
+  const el = document.getElementById('pub-results');
+  if (!q) return;
+
+  el.innerHTML = '<div class="search-loading" style="margin-top:12px">Checking AFP records...</div>';
+
+  const tracked     = profiles.find(p => p.name.toLowerCase() === q.toLowerCase());
+  const linkedCases = cases.filter(c => (c.user||'').toLowerCase() === q.toLowerCase() || (tracked && String(c.uid)===String(tracked.uid)));
+  const openCases   = linkedCases.filter(c => c.status !== 'Closed');
+
+  if (!tracked) {
+    el.innerHTML = `<div class="pub-result clear">
+      <div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:8px">✅ No AFP record found</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">
+        <strong style="color:var(--white)">${q}</strong> does not appear in the AFP database at this time.<br>
+        This does not constitute clearance — records may be added at any time.
+      </div>
+    </div>`;
+    return;
+  }
+
+  const isFlagged   = tracked.status==='Flagged'||tracked.status==='Banned';
+  const isMonitored = tracked.status==='Monitored';
+  const cls         = isFlagged ? 'flagged' : isMonitored ? 'monitored' : '';
+  const icon        = isFlagged ? '🚨' : isMonitored ? '⚠️' : tracked.status==='Cleared' ? '✅' : 'ℹ️';
+  const col         = isFlagged ? 'var(--red)' : isMonitored ? 'var(--amber)' : 'var(--muted)';
+
+  el.innerHTML = `<div class="pub-result ${cls}">
+    <div style="font-size:13px;font-weight:600;color:${col};margin-bottom:10px">${icon} AFP RECORD EXISTS — ${tracked.status.toUpperCase()}</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.8">
+      Username: <strong style="color:var(--white);font-family:'IBM Plex Mono',monospace">${tracked.name}</strong><br>
+      Roblox UID: <strong style="color:var(--white);font-family:'IBM Plex Mono',monospace">${tracked.uid||'—'}</strong><br>
+      Record added: <strong style="color:var(--white)">${tracked.date||'—'}</strong> by <strong style="color:var(--white)">${tracked.added||'—'}</strong>
+    </div>
+    ${openCases.length ? `<div style="margin-top:10px;font-size:12px;color:var(--amber);font-family:'IBM Plex Mono',monospace">⚡ ${openCases.length} open case(s) linked to this account</div>` : ''}
+    <div style="margin-top:10px;font-size:10px;color:var(--muted2);font-family:'IBM Plex Mono',monospace;line-height:1.6">
+      AFP-INV-PORTAL · All enquiries logged · Contact your assigned AFP officer for further information.
+    </div>
+  </div>`;
+};
+
+document.getElementById('pub-input').addEventListener('keydown', e => { if(e.key==='Enter') window.publicRecordCheck(); });
+
+// ── ROBLOX LOOKUP ────────────────────────────────────────────
+window.lookupRoblox = async () => {
+  const q  = document.getElementById('rblx-input').value.trim();
+  const el = document.getElementById('rblx-results');
+  if (!q) return;
+
+  el.innerHTML = '<div class="search-loading">Looking up Roblox profile...</div>';
+
+  try {
+    const isId = /^\d+$/.test(q);
+    const url  = isId ? `${WORKER_URL}/user?id=${q}` : `${WORKER_URL}/user?name=${encodeURIComponent(q)}`;
+    const res  = await fetch(url);
+    const data = await res.json();
+
+    if (data.error) {
+      el.innerHTML = `<div class="empty"><div class="big">❌</div>User not found: ${data.error}</div>`;
+      return;
+    }
+
+    const tracked     = profiles.find(p => String(p.uid)===String(data.id) || p.name.toLowerCase()===data.name.toLowerCase());
+    const linkedCases = cases.filter(c => String(c.uid)===String(data.id) || (c.user||'').toLowerCase()===data.name.toLowerCase());
+    const joinDate    = data.created ? new Date(data.created).toLocaleDateString('en-AU') : '—';
+
+    const isFlagged   = tracked && (tracked.status==='Flagged'||tracked.status==='Banned');
+    const isMonitored = tracked && tracked.status==='Monitored';
+    const alertCls    = isFlagged ? 'alert-flagged' : isMonitored ? 'alert-monitored' : '';
+
+    const alertBanner = isFlagged
+      ? `<div class="alert-banner red">🚨 AFP FLAGGED — HIGH RISK — Handle with caution</div>`
+      : isMonitored
+      ? `<div class="alert-banner amber">⚠️ AFP MONITORED — Active surveillance</div>`
+      : '';
+
+    const linkedHTML = linkedCases.length ? `
+      <div style="margin-top:10px">
+        <div class="fl" style="margin-bottom:5px">Linked Cases (${linkedCases.length})</div>
+        ${linkedCases.map(c=>`<div class="linked-case-card" onclick="openDetail('case','${c._key||c.id}')">
+          <div class="linked-case-title">${c.title} ${pill(c.status,'status')}</div>
+          <div class="linked-case-meta">${c.id} · ${c.assigned} · ${c.date}</div>
+        </div>`).join('')}
+      </div>` : '';
+
+    el.innerHTML = `
+      <div class="rblx-card ${alertCls}">
+        ${data.avatarUrl ? `<img class="rblx-avatar" src="${data.avatarUrl}" alt="avatar"/>` : `<div class="rblx-avatar-ph">👤</div>`}
+        <div style="flex:1;min-width:0">
+          ${alertBanner}
+          ${data.isBanned ? '<div class="rblx-banned">⛔ BANNED ON ROBLOX</div>' : ''}
+          <div class="rblx-name">${data.name}</div>
+          ${data.displayName!==data.name ? `<div class="rblx-display">${data.displayName}</div>` : ''}
+          <div class="rblx-meta">
+            <div class="rblx-meta-item">🆔 ${data.id}</div>
+            ${data.friendCount!==null?`<div class="rblx-meta-item">👥 ${data.friendCount} friends</div>`:''}
+            ${data.badgeCount!==null?`<div class="rblx-meta-item">🏅 ${data.badgeCount}+ badges</div>`:''}
+            <div class="rblx-meta-item">📅 Joined ${joinDate}</div>
+            ${tracked ? `<div class="rblx-meta-item">${pill(tracked.status,'ustat')}</div>` : `<div class="rblx-meta-item" style="color:var(--green)">✅ Not on watchlist</div>`}
+          </div>
+          ${data.description ? `<div class="rblx-desc">${data.description.slice(0,120)}${data.description.length>120?'…':''}</div>` : ''}
+          ${linkedHTML}
+          <div class="rblx-actions">
+            <a href="${data.profileUrl}" target="_blank" class="btn-ghost" style="font-size:11px;padding:5px 10px;text-decoration:none">Open Roblox ↗</a>
+            ${tracked
+              ? `<button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="openDetail('profile','${tracked._key||tracked.uid}')">View AFP Record ↗</button>`
+              : `<button class="btn-gold" style="font-size:11px;padding:5px 10px" onclick="quickAddProfile('${data.name}','${data.id}')">+ Add to System</button>`}
+            <button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="quickCreateCase('${data.name}','${data.id}')">+ Open Case</button>
+          </div>
+        </div>
+      </div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="empty"><div class="big">⚠️</div>Worker error: ${e.message}</div>`;
+  }
+};
+
+document.getElementById('rblx-input').addEventListener('keydown', e => { if(e.key==='Enter') window.lookupRoblox(); });
+
+// ── CASE SEARCH ──────────────────────────────────────────────
+window.searchCases = (q) => {
+  const el = document.getElementById('case-results');
+  if (!q.trim()) { el.innerHTML = '<div class="empty"><div class="big">📁</div>Enter keywords to find cases</div>'; return; }
+  const r = cases.filter(c =>
+    (c.id||'').toLowerCase().includes(q.toLowerCase()) ||
+    (c.title||'').toLowerCase().includes(q.toLowerCase()) ||
+    (c.user||'').toLowerCase().includes(q.toLowerCase()) ||
+    (c.uid||'').includes(q)
+  );
+  if (!r.length) { el.innerHTML = `<div class="empty"><div class="big">❌</div>No cases found</div>`; return; }
+  el.innerHTML = r.map(c=>`<div class="result-card" onclick="openDetail('case','${c._key||c.id}')">
+    <div class="rc-header"><div><div class="rc-title">${c.title}</div><div class="rc-sub">${c.id} · ${c.user||'—'}</div></div>${pill(c.status,'status')}</div>
+    <div style="font-size:11px;color:var(--muted)">Assigned: ${c.assigned} · ${c.date}</div>
+  </div>`).join('');
+};
+
+// ── TABLES ───────────────────────────────────────────────────
+function renderCasesTable(q='') {
+  const sf    = document.getElementById('case-sf')?.value||'';
+  const tbody = document.getElementById('cases-tbody');
+  const f = cases.filter(c =>
+    (!q||(c.id||'').toLowerCase().includes(q.toLowerCase())||(c.title||'').toLowerCase().includes(q.toLowerCase())||(c.user||'').toLowerCase().includes(q.toLowerCase())) &&
+    (!sf||c.status===sf)
+  );
+  tbody.innerHTML = f.length ? f.map(c=>`<tr onclick="openDetail('case','${c._key||c.id}')">
+    <td class="mono">${c.id||'—'}</td><td>${c.title||'—'}</td><td>${c.user||'—'}</td>
+    <td class="mono">${c.uid||'—'}</td><td>${pill(c.priority,'priority')}</td>
+    <td style="font-size:11px;color:var(--muted)">${c.assigned||'—'}</td>
+    <td>${pill(c.status,'status')}</td><td class="mono">${c.date||'—'}</td>
+  </tr>`).join('') : `<tr><td colspan="8" style="text-align:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;padding:20px">No cases found</td></tr>`;
+}
+
+function renderProfilesTable(q='') {
+  const tbody = document.getElementById('profiles-tbody');
+  const f = profiles.filter(p => !q||(p.name||'').toLowerCase().includes(q.toLowerCase())||(p.uid||'').includes(q));
+  tbody.innerHTML = f.length ? f.map(p=>`<tr onclick="openDetail('profile','${p._key||p.uid}')">
+    <td style="font-weight:500">${p.name||'—'}</td><td class="mono">${p.uid||'—'}</td>
+    <td>${pill(p.status,'ustat')}</td><td class="mono">${p.linked||'—'}</td>
+    <td style="font-size:11px;color:var(--muted)">${p.added||'—'}</td><td class="mono">${p.date||'—'}</td>
+  </tr>`).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;padding:20px">No profiles found</td></tr>`;
+}
+
+window.renderCasesTable    = renderCasesTable;
+window.renderProfilesTable = renderProfilesTable;
+
+// ── DETAIL PANEL ─────────────────────────────────────────────
+let detailType=null, detailKey=null;
+
+window.openDetail = (type, key) => {
+  detailType=type; detailKey=key;
+  const rec = type==='case' ? cases.find(c=>(c._key||c.id)===key) : profiles.find(p=>(p._key||p.uid)===key);
+  if (!rec) return;
+
+  document.getElementById('dp-title').textContent = type==='case' ? rec.title : rec.name;
+  document.getElementById('dp-sub').textContent   = type==='case' ? rec.id    : 'UID: '+rec.uid;
+
+  if (type==='case') {
+    document.getElementById('overview-content').innerHTML = `<div class="fg-grid">
+      <div><div class="fl">Case ID</div><div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--white);margin-top:4px">${rec.id}</div></div>
+      <div><div class="fl">Status</div><div style="margin-top:4px">${pill(rec.status,'status')}</div></div>
+      <div><div class="fl">Priority</div><div style="margin-top:4px">${pill(rec.priority,'priority')}</div></div>
+      <div><div class="fl">Assigned</div><div style="font-size:13px;color:var(--white);margin-top:4px">${rec.assigned||'—'}</div></div>
+      <div><div class="fl">Suspect</div><div style="font-size:13px;color:var(--white);margin-top:4px">${rec.user||'—'}</div></div>
+      <div><div class="fl">Roblox UID</div><div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);margin-top:4px">${rec.uid||'—'}</div></div>
+      <div><div class="fl">Date</div><div style="font-size:13px;color:var(--muted);margin-top:4px">${rec.date||'—'}</div></div>
+      <div><div class="fl">Notes</div><div style="font-size:13px;color:var(--white);margin-top:4px">${Object.keys(rec.notes||{}).length}</div></div>
+    </div>`;
+    document.getElementById('edit-content').innerHTML = `<div class="fg-grid">
+      <div class="fg-group"><label class="fl">Title</label><input class="fi" id="e-title" type="text" value="${rec.title||''}"/></div>
+      <div class="fg-group"><label class="fl">Status</label><select class="fi" id="e-status">${['Open','Pending','Urgent','Closed'].map(s=>`<option${rec.status===s?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="fg-group"><label class="fl">Priority</label><select class="fi" id="e-priority">${['Normal','High','Urgent'].map(s=>`<option${rec.priority===s?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="fg-group"><label class="fl">Assigned To</label><input class="fi" id="e-assigned" type="text" value="${rec.assigned||''}"/></div>
+      <div class="fg-group"><label class="fl">Suspect Username</label><input class="fi" id="e-user" type="text" value="${rec.user||''}"/></div>
+      <div class="fg-group"><label class="fl">Roblox UID</label><input class="fi" id="e-uid" type="text" value="${rec.uid||''}"/></div>
+    </div>`;
+  } else {
+    document.getElementById('overview-content').innerHTML = `<div class="fg-grid">
+      <div><div class="fl">Username</div><div style="font-size:15px;font-weight:600;color:var(--white);margin-top:4px">${rec.name||'—'}</div></div>
+      <div><div class="fl">Roblox UID</div><div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);margin-top:4px">${rec.uid||'—'}</div></div>
+      <div><div class="fl">Status</div><div style="margin-top:4px">${pill(rec.status,'ustat')}</div></div>
+      <div><div class="fl">Linked Case</div><div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--white);margin-top:4px">${rec.linked||'—'}</div></div>
+      <div><div class="fl">Added By</div><div style="font-size:13px;color:var(--white);margin-top:4px">${rec.added||'—'}</div></div>
+      <div><div class="fl">Date</div><div style="font-size:13px;color:var(--muted);margin-top:4px">${rec.date||'—'}</div></div>
+    </div>`;
+    document.getElementById('edit-content').innerHTML = `<div class="fg-grid">
+      <div class="fg-group"><label class="fl">Username</label><input class="fi" id="e-name" type="text" value="${rec.name||''}"/></div>
+      <div class="fg-group"><label class="fl">Roblox UID</label><input class="fi" id="e-uid2" type="text" value="${rec.uid||''}"/></div>
+      <div class="fg-group"><label class="fl">Status</label><select class="fi" id="e-ustatus">${['Monitored','Flagged','Cleared','Banned'].map(s=>`<option${rec.status===s?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="fg-group"><label class="fl">Linked Case</label><input class="fi" id="e-linked" type="text" value="${rec.linked||''}"/></div>
+    </div>`;
+  }
+
+  renderNotesPanel(rec);
+  renderEvidencePanel(rec);
+  switchTabById('t-overview');
+  document.getElementById('detail-overlay').classList.add('open');
+};
+
+function renderNotesPanel(rec) {
+  const notes = rec.notes ? Object.entries(rec.notes).sort((a,b)=>a[0].localeCompare(b[0])) : [];
+  const list  = document.getElementById('notes-list');
+  list.innerHTML = notes.length ? notes.map(([k,n])=>`<div class="note-item">
+    <div class="note-meta"><span>${n.by||'Unknown'} · ${n.time||'—'}</span>
+    ${isSupervisor?`<button class="note-del" onclick="deleteNote('${k}')">✕</button>`:''}</div>
+    <div class="note-body">${n.text||''}</div>
+  </div>`).join('') : '<div class="empty" style="padding:10px 0">No notes yet.</div>';
+}
+
+window.addNote = async () => {
+  const text = document.getElementById('new-note').value.trim();
+  if (!text) return;
+  const now  = new Date().toLocaleString('en-AU',{dateStyle:'short',timeStyle:'short'});
+  const note = { by:auth.id||'Unknown', time:now, text };
+  const base = detailType==='case' ? `cases/${detailKey}/notes` : `profiles/${detailKey}/notes`;
+  await push(ref(db,base), note);
+  document.getElementById('new-note').value = '';
+  logAction('Note added', detailKey, { recordId:detailKey, noteText:text });
+  toast('Note saved');
+};
+
+window.deleteNote = async (noteKey) => {
+  if (!isSupervisor) return;
+  const base = detailType==='case' ? `cases/${detailKey}/notes/${noteKey}` : `profiles/${detailKey}/notes/${noteKey}`;
+  await remove(ref(db,base));
+  logAction('Note deleted', detailKey, {});
+  toast('Note deleted');
+};
+
+window.saveEdit = async () => {
+  if (detailType==='case') {
+    const data = {
+      title:    document.getElementById('e-title').value,
+      status:   document.getElementById('e-status').value,
+      priority: document.getElementById('e-priority').value,
+      assigned: document.getElementById('e-assigned').value,
+      user:     document.getElementById('e-user').value,
+      uid:      document.getElementById('e-uid').value,
+    };
+    await update(ref(db,`cases/${detailKey}`), data);
+    logAction('Case updated', detailKey, { case:{...data, id:detailKey} });
+  } else {
+    const data = {
+      name:   document.getElementById('e-name').value,
+      uid:    document.getElementById('e-uid2').value,
+      status: document.getElementById('e-ustatus').value,
+      linked: document.getElementById('e-linked').value,
+    };
+    await update(ref(db,`profiles/${detailKey}`), data);
+    logAction('Profile updated', detailKey, { profile:data });
+  }
+  closeOverlay('detail-overlay'); toast('Changes saved');
+};
+
+window.deleteRecord = async () => {
+  if (!isSupervisor) return;
+  if (!confirm('Delete this record? Cannot be undone.')) return;
+  if (detailType==='case') await remove(ref(db,`cases/${detailKey}`));
+  else                      await remove(ref(db,`profiles/${detailKey}`));
+  logAction('Record deleted', detailKey, {});
+  closeOverlay('detail-overlay'); toast('Record deleted');
+};
+
+window.archiveRecord = async () => {
+  if (!isSupervisor) return;
+  if (detailType==='case') await update(ref(db,`cases/${detailKey}`),{status:'Closed'});
+  logAction('Case archived', detailKey, {});
+  closeOverlay('detail-overlay'); toast('Archived');
+};
+
+// ── ADD RECORDS ──────────────────────────────────────────────
+window.submitAddProfile = async () => {
+  const name = document.getElementById('ap-name').value.trim();
+  if (!name) { toast('Username required'); return; }
+  const today=new Date().toISOString().split('T')[0];
+  const noteTxt=document.getElementById('ap-notes').value.trim();
+  const rec = {
+    name, uid:document.getElementById('ap-uid').value.trim()||'—',
+    status:document.getElementById('ap-status').value,
+    linked:document.getElementById('ap-case').value.trim()||'—',
+    added:auth.id||'Unknown', date:today, notes:{}
+  };
+  if (noteTxt) rec.notes[Date.now()]={by:auth.id||'Unknown',time:new Date().toLocaleString('en-AU',{dateStyle:'short',timeStyle:'short'}),text:noteTxt};
+  await push(ref(db,'profiles'), rec);
+  closeOverlay('add-profile-modal');
+  logAction('Profile added', `${name} (${rec.uid})`, { profile:rec });
+  toast('Profile added');
+  ['ap-name','ap-uid','ap-case','ap-notes'].forEach(id=>document.getElementById(id).value='');
+};
+
+window.submitAddCase = async () => {
+  const title=document.getElementById('ac-title').value.trim();
+  if (!title) { toast('Title required'); return; }
+  const today=new Date().toISOString().split('T')[0];
+  const cid=document.getElementById('ac-id').value.trim()||`AFP-${today.replace(/-/g,'').slice(2)}-${String(cases.length+1).padStart(3,'0')}`;
+  const noteTxt=document.getElementById('ac-notes').value.trim();
+  const rec = {
+    id:cid, title,
+    user:document.getElementById('ac-user').value.trim()||'—',
+    uid:document.getElementById('ac-uid').value.trim()||'—',
+    priority:document.getElementById('ac-priority').value,
+    assigned:document.getElementById('ac-assigned').value.trim()||auth.id||'Unassigned',
+    status:'Open', date:today, notes:{}
+  };
+  if (noteTxt) rec.notes[Date.now()]={by:auth.id||'Unknown',time:new Date().toLocaleString('en-AU',{dateStyle:'short',timeStyle:'short'}),text:noteTxt};
+  await push(ref(db,'cases'), rec);
+  closeOverlay('add-case-modal');
+  logAction('Case created', `${cid}: ${title}`, { case:rec });
+  toast('Case created');
+  ['ac-id','ac-title','ac-user','ac-uid','ac-assigned','ac-notes'].forEach(id=>document.getElementById(id).value='');
+};
+
+window.quickAddProfile = (name,uid) => { document.getElementById('ap-name').value=name; document.getElementById('ap-uid').value=uid; openModal('add-profile-modal'); };
+window.quickCreateCase = (name,uid) => { document.getElementById('ac-user').value=name; document.getElementById('ac-uid').value=uid; openModal('add-case-modal'); };
+
+// ── ACTIVITY LOG ─────────────────────────────────────────────
+async function logAction(action, detail, extra) {
+  const now  = new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+  const entry = { officer:auth.id||'Unknown', action, detail, time:now, ts:Date.now() };
+  await push(ref(db,'actlog'), entry);
+  sendDiscord(action, detail, extra||{});
+}
+
+function renderLog() {
+  const el=document.getElementById('log-list');
+  if (!actLog.length) { el.innerHTML='<div class="empty">No activity yet.</div>'; return; }
+  el.innerHTML = actLog.slice(0,60).map(l=>`<div class="log-item">
+    <div class="log-time">${l.time||'—'}</div>
+    <div class="log-text"><span>${l.officer||'Unknown'}</span> — ${l.action}: ${l.detail}</div>
+  </div>`).join('');
+}
+
+// ── DISCORD EMBEDS V2 ────────────────────────────────────────
+const ACTION_META = {
+  'Case created':        { color:0x2db87a, emoji:'📁', cat:'CASE MANAGEMENT' },
+  'Case updated':        { color:0xc8a84b, emoji:'✏️',  cat:'CASE MANAGEMENT' },
+  'Case archived':       { color:0x8a96b0, emoji:'📦', cat:'CASE MANAGEMENT' },
+  'Record deleted':      { color:0xd94040, emoji:'🗑️', cat:'RECORDS' },
+  'Profile added':       { color:0x2db87a, emoji:'👤', cat:'PROFILE MANAGEMENT' },
+  'Profile updated':     { color:0xc8a84b, emoji:'✏️',  cat:'PROFILE MANAGEMENT' },
+  'Profile deleted':     { color:0xd94040, emoji:'🗑️', cat:'PROFILE MANAGEMENT' },
+  'Note added':          { color:0x7aa3e8, emoji:'📝', cat:'INVESTIGATION NOTES' },
+  'Note deleted':        { color:0xd94040, emoji:'🗑️', cat:'INVESTIGATION NOTES' },
+  'Evidence added':      { color:0x7aa3e8, emoji:'📸', cat:'EVIDENCE' },
+  'Evidence deleted':    { color:0xd94040, emoji:'🗑️', cat:'EVIDENCE' },
+  'Officer added':       { color:0x2db87a, emoji:'👮', cat:'OFFICER MANAGEMENT' },
+  'Officer updated':     { color:0xc8a84b, emoji:'✏️',  cat:'OFFICER MANAGEMENT' },
+  'Officer deleted':     { color:0xd94040, emoji:'🗑️', cat:'OFFICER MANAGEMENT' },
+  'Officer suspended':   { color:0xe09a30, emoji:'🚫', cat:'OFFICER MANAGEMENT' },
+  'Officer unsuspended': { color:0x2db87a, emoji:'✅', cat:'OFFICER MANAGEMENT' },
+};
+
+async function sendDiscord(action, detail, extra) {
+  try {
+    const meta   = ACTION_META[action] || { color:0x001f5e, emoji:'🔔', cat:'SYSTEM' };
+    const now    = new Date();
+    const tsUnix = Math.floor(now.getTime()/1000);
+    const officerRole = ROLE_LABEL_FULL[auth.role] || auth.role || 'Unknown';
+
+    const fields = [
+      { name:'👮  Officer',   value:`**${auth.displayName||auth.id||'Unknown'}**\n\`${auth.id||'—'}\``, inline:true },
+      { name:'🎖️  Clearance', value:`**${officerRole}**`,                                                inline:true },
+      { name:'🕐  When',      value:`<t:${tsUnix}:F>\n<t:${tsUnix}:R>`,                                 inline:true },
+    ];
+
+    // Action-specific fields
+    if (action==='Case created' || action==='Case updated') {
+      const c = extra.case||{};
+      fields.push({ name:'​', value:'───────────────────', inline:false });
+      fields.push({ name:'📋  Case ID',     value:`\`${c.id||detail}\``,        inline:true });
+      fields.push({ name:'📌  Status',      value:`\`${c.status||'Open'}\``,    inline:true });
+      fields.push({ name:'⚡  Priority',    value:`\`${c.priority||'—'}\``,     inline:true });
+      fields.push({ name:'👤  Suspect',     value:`**${c.user||'—'}**`,         inline:true });
+      fields.push({ name:'🎮  Roblox UID',  value:`\`${c.uid||'—'}\``,         inline:true });
+      fields.push({ name:'🔎  Assigned To', value:`${c.assigned||'—'}`,        inline:true });
+      if (c.title) fields.push({ name:'📝  Title', value:c.title, inline:false });
+
+    } else if (action==='Case archived') {
+      fields.push({ name:'📦  Case ID', value:`\`${detail}\``, inline:false });
+
+    } else if (action==='Profile added' || action==='Profile updated') {
+      const p = extra.profile||{};
+      fields.push({ name:'​', value:'───────────────────', inline:false });
+      fields.push({ name:'👤  Username',   value:`**${p.name||'—'}**`,   inline:true });
+      fields.push({ name:'🆔  Roblox UID', value:`\`${p.uid||'—'}\``,   inline:true });
+      fields.push({ name:'🚦  Status',     value:`\`${p.status||'—'}\``, inline:true });
+      if (p.linked && p.linked!=='—') fields.push({ name:'📋  Linked Case', value:`\`${p.linked}\``, inline:true });
+
+    } else if (action==='Evidence added') {
+      fields.push({ name:'📸  Evidence',   value:`**${extra.evidenceTitle||'—'}**`,  inline:true });
+      fields.push({ name:'🗂️  Type',       value:`\`${extra.evidenceType||'—'}\``,   inline:true });
+      fields.push({ name:'🗂️  Record',     value:`\`${extra.recordId||detail}\``,    inline:true });
+
+    } else if (action==='Note added') {
+      fields.push({ name:'🗂️  Record',   value:`\`${extra.recordId||detail}\``, inline:false });
+      fields.push({ name:'📝  Note',     value:extra.noteText ? `> ${extra.noteText.slice(0,300)}` : '—', inline:false });
+
+    } else if (action==='Officer added' || action==='Officer updated') {
+      fields.push({ name:'​', value:'───────────────────', inline:false });
+      fields.push({ name:'🪪  Badge ID',    value:`\`${extra.badgeId||'—'}\``,   inline:true });
+      fields.push({ name:'🎖️  New Role',    value:`**${ROLE_LABEL_FULL[extra.newRole]||extra.newRole||'—'}**`, inline:true });
+      if (extra.displayName) fields.push({ name:'🏷️  Display Name', value:extra.displayName, inline:true });
+
+    } else if (action==='Officer suspended' || action==='Officer unsuspended') {
+      fields.push({ name:'🪪  Badge ID', value:`\`${extra.badgeId||detail}\``,                        inline:true });
+      fields.push({ name:'🎖️  Role',     value:`${ROLE_LABEL_FULL[extra.role]||extra.role||'—'}`,     inline:true });
+
+    } else if (action==='Record deleted' || action==='Officer deleted' || action==='Note deleted') {
+      fields.push({ name:'🗑️  Deleted', value:`\`${detail}\``, inline:false });
+
+    } else {
+      fields.push({ name:'ℹ️  Detail', value:detail||'—', inline:false });
+    }
+
+    await fetch(DISCORD_WEBHOOK, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        embeds: [{
+          author: { name:`🇦🇺 AFP INVESTIGATOR PORTAL  ·  ${meta.cat}` },
+          title:  `${meta.emoji}  ${action}`,
+          color:  meta.color,
+          fields,
+          footer: { text:'Australian Federal Police — Secure Investigator Portal  ·  All actions are monitored and logged' },
+          timestamp: now.toISOString()
+        }]
+      })
+    });
+  } catch(e) { console.warn('Discord:', e); }
+}
+
+// ── ADMIN — OFFICER MANAGEMENT ───────────────────────────────
+window.adminAddOfficer = async () => {
+  if (!isSupervisor) return;
+  const id   = document.getElementById('adm-id').value.trim();
+  const pass = document.getElementById('adm-pass').value.trim();
+  const name = document.getElementById('adm-name').value.trim();
+  const role = document.getElementById('adm-role').value;
+  if (!id||!pass) { toast('ID and passphrase required'); return; }
+  if (role==='division' && !isDivision) { toast('Only Division Command can create Division Command accounts'); return; }
+  const safeId = id.replace(/[.#$[\]]/g,'_');
+  await set(ref(db,`officers/${role}/${safeId}`), { pass, displayName:name||id, rank:role, suspended:false });
+  logAction('Officer added', `${id} as ${role}`, { badgeId:id, newRole:role, displayName:name||id });
+  toast(`Officer ${id} added`);
+  ['adm-id','adm-pass','adm-name'].forEach(i=>document.getElementById(i).value='');
+  loadOfficers();
+};
+
+window.loadOfficers = async () => {
+  if (!isSupervisor) return;
+  const el = document.getElementById('officer-list');
+  el.innerHTML = '<div class="search-loading">Loading officers...</div>';
+  try {
+    const [invSnap,supSnap,divSnap,admSnap] = await Promise.all([
+      get(ref(db,'officers/investigator')),
+      get(ref(db,'officers/supervisor')),
+      get(ref(db,'officers/division')),
+      get(ref(db,'officers/admin'))
+    ]);
+    let officers = [];
+    if (admSnap.exists()) Object.entries(admSnap.val()).forEach(([k,v])=>officers.push({...v,_key:k,_role:'admin'}));
+    if (divSnap.exists()) Object.entries(divSnap.val()).forEach(([k,v])=>officers.push({...v,_key:k,_role:'division'}));
+    if (supSnap.exists()) Object.entries(supSnap.val()).forEach(([k,v])=>officers.push({...v,_key:k,_role:'supervisor'}));
+    if (invSnap.exists()) Object.entries(invSnap.val()).forEach(([k,v])=>officers.push({...v,_key:k,_role:'investigator'}));
+    if (!officers.length) { el.innerHTML='<div class="empty">No officers found.</div>'; return; }
+    el.innerHTML = officers.map(o => {
+      const canEdit = isAdmin || (isDivision && o._role !== 'admin') || (isSupervisor && o._role !== 'division' && o._role !== 'admin');
+      return `<div class="officer-row">
+        <div style="flex:1">
+          <div class="officer-id">${o._key.replace(/_/g,'-')}</div>
+          <div class="officer-meta">
+            ${o.displayName||o._key}
+            <span class="pill ${ROLE_PILL[o._role]||'pill-open'}" style="margin-left:5px">${ROLE_LABEL_FULL[o._role]||o._role}</span>
+            ${o.suspended?'<span class="pill pill-flagged" style="margin-left:4px">SUSPENDED</span>':''}
+          </div>
+        </div>
+        <div class="officer-actions">
+          ${canEdit?`<button class="btn-ghost" style="font-size:10px;padding:4px 9px" onclick="openEditOfficer('${o._role}','${o._key}')">Edit</button>`:''}
+          ${canEdit?`<button class="btn-ghost" style="font-size:10px;padding:4px 9px;color:var(--amber);border-color:var(--amber-border)" onclick="toggleSuspend('${o._role}','${o._key}',${!o.suspended})">${o.suspended?'Unsuspend':'Suspend'}</button>`:''}
+          ${canEdit?`<button class="btn-danger" style="font-size:10px;padding:4px 9px" onclick="deleteOfficer('${o._role}','${o._key}')">Delete</button>`:''}
+          ${!canEdit?'<span style="font-size:10px;color:var(--muted);font-family:\'IBM Plex Mono\',monospace;padding:4px">🔒 Protected</span>':''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML=`<div class="empty">Error: ${e.message}</div>`; }
+};
+
+window.toggleSuspend = async (role,key,suspend) => {
+  if (!isSupervisor) return;
+  if (role==='division' && !isDivision) { toast('Insufficient clearance'); return; }
+  await update(ref(db,`officers/${role}/${key}`),{suspended:suspend});
+  logAction(suspend?'Officer suspended':'Officer unsuspended', key.replace(/_/g,'-'), { badgeId:key.replace(/_/g,'-'), role });
+  toast(suspend?'Officer suspended':'Officer unsuspended');
+  loadOfficers();
+};
+
+window.deleteOfficer = async (role,key) => {
+  if (!isSupervisor) return;
+  if (role==='division' && !isDivision) { toast('Insufficient clearance'); return; }
+  if (!confirm(`Delete ${key.replace(/_/g,'-')}? Cannot be undone.`)) return;
+  await remove(ref(db,`officers/${role}/${key}`));
+  logAction('Officer deleted', key.replace(/_/g,'-'), { badgeId:key.replace(/_/g,'-'), role });
+  toast('Officer deleted'); loadOfficers();
+};
+
+window.openEditOfficer = async (role,key) => {
+  if (!isSupervisor) return;
+  if (role==='division' && !isDivision) { toast('Insufficient clearance'); return; }
+  const snap = await get(ref(db,`officers/${role}/${key}`));
+  if (!snap.exists()) return;
+  const o = snap.val();
+  document.getElementById('eo-role').value     = role;
+  document.getElementById('eo-key').value      = key;
+  document.getElementById('eo-badgeid').value  = key.replace(/_/g,'-');
+  document.getElementById('eo-name').value     = o.displayName||'';
+  document.getElementById('eo-pass').value     = '';
+  document.getElementById('eo-newrole').value  = role;
+  document.getElementById('eo-id-display').textContent = key.replace(/_/g,'-');
+  document.getElementById('eo-div-opt').style.display = isDivision?'':'none';
+  openModal('edit-officer-modal');
+};
+
+window.saveEditOfficer = async () => {
+  if (!isSupervisor) return;
+  const oldRole  = document.getElementById('eo-role').value;
+  const oldKey   = document.getElementById('eo-key').value;
+  const newRole  = document.getElementById('eo-newrole').value;
+  const name     = document.getElementById('eo-name').value.trim();
+  const pass     = document.getElementById('eo-pass').value.trim();
+  const newBadge = document.getElementById('eo-badgeid').value.trim();
+  const newKey   = newBadge ? newBadge.replace(/[.#$[\]]/g,'_') : oldKey;
+  if (oldRole==='division' && !isDivision) { toast('Insufficient clearance'); return; }
+  if (newRole==='division' && !isDivision) { toast('Cannot assign Division Command role'); return; }
+  const snap = await get(ref(db,`officers/${oldRole}/${oldKey}`));
+  const existing = snap.val()||{};
+  const updated  = { ...existing, displayName:name, rank:newRole };
+  if (pass) updated.pass = pass;
+  if (oldRole!==newRole || newKey!==oldKey) {
+    await set(ref(db,`officers/${newRole}/${newKey}`), updated);
+    await remove(ref(db,`officers/${oldRole}/${oldKey}`));
+  } else {
+    await update(ref(db,`officers/${oldRole}/${oldKey}`), updated);
+  }
+  logAction('Officer updated', `${oldKey.replace(/_/g,'-')} → ${newKey.replace(/_/g,'-')}`, { badgeId:newKey.replace(/_/g,'-'), newRole, displayName:name });
+  toast('Officer updated');
+  closeOverlay('edit-officer-modal');
+  loadOfficers();
+};
+
+
+// ── EVIDENCE ────────────────────────────────────────────────
+function renderEvidencePanel(rec) {
+  const grid = document.getElementById('evidence-grid');
+  const evs  = rec.evidence ? Object.entries(rec.evidence).sort((a,b)=>a[0].localeCompare(b[0])) : [];
+  const typeIcon = { screenshot:'📸', document:'📄', video:'🎥', chat:'💬', link:'🔗', other:'📎' };
+  if (!evs.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:14px 0">No evidence attached.</div>';
+    return;
+  }
+  grid.innerHTML = evs.map(([k,ev])=>`<div class="evidence-card">
+    ${isSupervisor||isAdmin?`<button class="evidence-del" onclick="deleteEvidence('${k}')">✕</button>`:''}
+    <span class="evidence-icon">${typeIcon[ev.type]||'📎'}</span>
+    <div class="evidence-name">${ev.title||'Untitled'}</div>
+    <div class="evidence-meta">${ev.type||'other'}<br>${ev.addedBy||'—'} · ${ev.date||'—'}</div>
+    ${ev.url?`<div style="text-align:center;margin-top:6px"><a href="${ev.url}" target="_blank" style="font-size:10px;color:var(--gold);font-family:'IBM Plex Mono',monospace;text-decoration:none">Open link ↗</a></div>`:''}
+    ${ev.notes?`<div style="font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4">${ev.notes}</div>`:''}
+  </div>`).join('');
+}
+
+window.addEvidence = async () => {
+  const title = document.getElementById('ev-title').value.trim();
+  if (!title) { toast('Evidence title required'); return; }
+  const ev = {
+    type:    document.getElementById('ev-type').value,
+    title,
+    url:     document.getElementById('ev-url').value.trim()||'',
+    notes:   document.getElementById('ev-notes').value.trim()||'',
+    addedBy: auth.id||'Unknown',
+    date:    new Date().toLocaleDateString('en-AU')
+  };
+  const base = detailType==='case' ? `cases/${detailKey}/evidence` : `profiles/${detailKey}/evidence`;
+  await push(ref(db,base), ev);
+  document.getElementById('ev-title').value='';
+  document.getElementById('ev-url').value='';
+  document.getElementById('ev-notes').value='';
+  // re-render
+  const recArr = detailType==='case' ? cases : profiles;
+  const rec    = recArr.find(r=>(r._key||r.id||r.uid)===detailKey);
+  if (rec) renderEvidencePanel(rec);
+  logAction('Evidence added', `${detailKey}: ${title}`, { recordId:detailKey, evidenceTitle:title, evidenceType:ev.type });
+  toast('Evidence added');
+};
+
+window.deleteEvidence = async (evKey) => {
+  if (!isSupervisor && !isAdmin) return;
+  const base = detailType==='case' ? `cases/${detailKey}/evidence/${evKey}` : `profiles/${detailKey}/evidence/${evKey}`;
+  await remove(ref(db,base));
+  logAction('Evidence deleted', detailKey, {});
+  toast('Evidence deleted');
+};
+
+// ── UI HELPERS ───────────────────────────────────────────────
+window.openModal    = id => document.getElementById(id).classList.add('open');
+window.closeOverlay = id => document.getElementById(id).classList.remove('open');
+window.overlayClick = (e,id) => { if(e.target===document.getElementById(id)) closeOverlay(id); };
+
+window.switchTab = (btn,targetId) => {
+  btn.closest('.dp-body').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-c').forEach(c=>c.classList.remove('active'));
+  document.getElementById(targetId).classList.add('active');
+};
+
+function switchTabById(id) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.tab-c').forEach(c=>c.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+window.switchRp = (tab,btn) => {
+  document.querySelectorAll('.rp-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('rp-notepad').style.display = tab==='notepad'?'block':'none';
+  document.getElementById('rp-qrf').style.display     = tab==='qrf'?'block':'none';
+};
+
+function toast(msg) {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+window.toast = toast;
+</script>
+</body>
+</html>
 .rblx-desc{font-size:12px;color:var(--muted);line-height:1.5;max-height:44px;overflow:hidden;margin-bottom:8px}
 .rblx-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
 .rblx-banned{color:var(--red);background:var(--red-dim);border:1px solid var(--red-border);border-radius:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 8px;display:inline-block;margin-bottom:5px}
